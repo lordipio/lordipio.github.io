@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amirali Ahangari</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      margin: 0;
+      background: black;
+      color: #00d600;
+      overflow-x: hidden;
+    }
+
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      background: black;
+    }
+
+    header {
+      background: #001100e6;
+      color: #00ff00;
+      text-align: center;
+      padding: 3.5rem 1rem 2rem;
+      box-shadow: 0 0 20px #003300;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.8rem;
+      text-shadow: 0 0 4px #00ff00;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      color: #33ff33;
+    }
+
+    .wrapper {
+      max-width: 960px;
+      margin: 3rem auto;
+      background: #000000e3;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #002200;
+    }
+
+    h2 {
+      color: #39ff14;
+      border-bottom: 1px solid #006600;
+      padding-bottom: 0.4rem;
+      margin-top: 2rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+    }
+
+a {
+  color: #00bfff;
+  text-decoration: underline;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+a:hover {
+  color: #39ff14;
+  animation: neonPulse 0.2s ease-in-out infinite alternate;
+  text-shadow:
+    0 0 5px #39ff14,
+    0 0 10px #39ff14,
+    0 0 15px #39ff14;
+}
+
+@keyframes neonPulse {
+  0% {
+    text-shadow:
+      0 0 5px #39ff14,
+      0 0 10px #39ff14,
+      0 0 15px #39ff14;
+  }
+  100% {
+    text-shadow:
+      0 0 7px #39ff14,
+      0 0 15px #39ff14,
+      0 0 20px #39ff14;
+  }
+}
+
+.white-inter a,
+.green-inter a {
+  color: #00bfff;
+  text-decoration: underline;
+  font-family: 'Inter', sans-serif;
+}
+
+.white-inter a:hover,
+.green-inter a:hover {
+  color: #ffff66;
+  text-shadow: 0 0 6px #ffff66;
+}
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: #00cc00;
+      font-size: 0.9rem;
+    }
+
+    .quote-box {
+      border-left: 4px solid #00ff00;
+      background-color: #001100cc;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+      color: #99ff99;
+      position: relative;
+    }
+
+    .quote-box::before {
+      content: "“";
+      font-size: 2rem;
+      color: #00ff00;
+      position: absolute;
+      left: 10px;
+      top: 5px;
+    }
+
+    .quote-author {
+      margin-top: 0.5rem;
+      text-align: right;
+      font-style: normal;
+      font-weight: bold;
+      color: #66ff66;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .project-card {
+      background-color: #000;
+      border-radius: 12px;
+      box-shadow: 0 0 16px #003300;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #003300;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    .project-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background-color: #002200;
+    }
+
+    .project-content {
+      padding: 1.2rem;
+    }
+
+    .project-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #60ff60;
+      margin-bottom: 0.5rem;
+    }
+
+    .project-description {
+      font-size: 0.95rem;
+      color: #ffffff;
+    }
+
+    .white-inter {
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .white-inter a {
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .white-inter a:hover {
+      text-shadow: 0 0 6px #ffffff;
+    }
+
+    /* .green-inter {
+      color: #2dff3f;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .green-inter a {
+      color: #2dff3f;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .green-inter a:hover {
+      text-shadow: 0 0 6px #2dff3f;
+    } */
+
+    section:nth-of-type(1) p {
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+    }
+
+  .section-box {
+  background: #001400cc;
+  padding: 0.1rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 16px #002200;
+  }
+
+  .section-box {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+.section-box:nth-of-type(1) { animation-delay: 0.3s; }
+.section-box:nth-of-type(2) { animation-delay: 0.5s; }
+.section-box:nth-of-type(3) { animation-delay: 0.7s; }
+.section-box:nth-of-type(4) { animation-delay: 0.9s; }
+.section-box:nth-of-type(5) { animation-delay: 1.1s; }
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2 {
+  color: #39ff14;
+  position: relative;
+  overflow: hidden;
+}
+
+h2::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(57, 255, 20, 0.3),
+    transparent
+  );
+  animation: shine 12s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes shine {
+  0%   { left: -100%; opacity: 1; }
+  16.6%  { left: 100%; opacity: 1; }
+  16.7%  { opacity: 0; }             
+  100% { left: 100%; opacity: 0; }  
+}
+
+  </style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<header>
+  <h1>Amirali Ahangari</h1>
+  <p>Game Developer | Graphics Enthusiast</p>
+</header>
+
+<div class="wrapper">
+
+<section>
+  <div class="quote-box">
+    You might not think that programmers are artists, but programming is an extremely creative profession. It’s logic-based creativity.
+    <div class="quote-author">– John Romero</div>
+  </div>
+</section>
+
+  <br>
+  <br>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="🧠 About Me"></h2>
+  <p><span class="white-inter">
+    I’m someone who fell in love with video games as a kid and never really grew out of it.  
+    What started with games like GTA: Vice City turned into a real curiosity about how games actually work, especially the low-level stuff like rendering, shaders, and engine systems.  
+    Even though I’m studying Industrial Engineering, I’ve gradually shifted my focus toward computer science by working as a TA in algorithm design and gamification, and by getting hands-on with internships and projects in game studios.  
+    I’ve built several projects using Unreal Engine, Unity, and OpenGL, diving into gameplay systems, optimization, and core system development, while also getting more and more into the artistic side of game design, like world-building and visual storytelling.  
+    I love the idea of mixing code and creativity, and I'm always looking for ways to turn that mix into something players can truly feel and connect with.
+  </p></span></li>
+  </ul>
+</section>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="📄 Resume"></h2>
+  <ul>
+    <li><a href="CV.pdf" target="_blank">Download Resume (PDF)</a></li>
+  </ul>
+</section>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="🎓 Education"></h2>
+  <ul>
+    <li><strong>Bachelor of Industrial Engineering</strong>, Amirkabir University of Technology (Tehran Polytechnic)<br>
+    <span class="white-inter">Sept 2020 – Present | GPA: 3.58/4.00 (Converted from 16.59/20)</span></li>
+  </ul>
+</section>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="🔬 Research Interests"></h2>
+  <p class="white-inter">Computer Graphics, HCI, Game Programming, Engine Programming, Software Engineering</p>
+</section>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="📚 Research Experience"></h2>
+  <ul>
+    <li><strong>Thesis: Educational Gaming Application</strong> – In Preparation<br>
+      <span class="white-inter">Developing an educational gaming application integrating gamification principles to enhance learning experiences.</span>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="📝 Publications"></h2>
+  <ul>
+    <li><strong>Solution Approaches in Disaster Management</strong> – In Preparation<br>
+      <span class="white-inter">
+        • Conducted a comprehensive literature review on optimization models and algorithms in disaster management.<br>
+        • Analyzed existing solution approaches for logistical challenges during disaster response.
+      </span>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+<h2 class="matrix-title" data-text="🎓 Teaching Experience"></h2>
+  <ul>
+    <li><strong>Teaching Assistant, Algorithm Design</strong> (2023–2024)<br>
+      <span class="white-inter">Taught OOP, Dijkstra, A* algorithms; assisted in optimization and design techniques.</span>
+    </li>
+      <br>
+
+    <li><strong>Teaching Assistant, Gamification</strong> (2024–Present)<br>
+      <span class="white-inter">Led discussions on gamification principles; helped design gamified projects.</span>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2 class="matrix-title" data-text="💼 Professional Experience"></h2>
+  <ul>
+    <li>
+      <strong>Game Developer, <a href="https://drivingsimulator.ir/en" target="_blank">Nasir Driving Simulator</a></strong> (Sept 2023 – Present)<br>
+      <span class="white-inter">
+        • Developed physics-based interaction system for soil/excavator.<br>
+        • Applied SOLID and Singleton patterns; UI for vehicle gauges.<br>
+        • Shader programming and version control via Git.
+      </span>
+    </li>
+      <br>
+
+    <li>
+      
+      <strong>Unity Developer, <a href="https://deadmage.com/" target="_blank">Dead Mage</a></strong> (Jan – Feb 2025)<br>
+      <span class="white-inter">
+        • Built prototype for tile-based digging game using Unity Tile Maps and Grid.<br>
+        • Designed gameplay features; optimized rendering and performance.
+      </span>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2 class="matrix-title" data-text="🚀 Projects"></h2>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <img src="https://github.com/user-attachments/assets/b544a6a1-dc71-436a-aa4a-7fda469aee42" alt="3D Renderer" class="project-image">
+      <div class="project-content">
+        <div class="project-title">3D Software Renderer (C)</div>
+        <div class="project-description">
+          A custom 3D renderer built from scratch using SDL2 and C, handling perspective projection, rasterization, and camera control.
+          <br><a href="https://github.com/lordipio/3D_Renderer" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="project-card">
+      <img src="https://github.com/lordipio/ThirdPersonGame-UE5/assets/88454144/03c574a3-ed47-43b5-87b3-1965d556964a" alt="UE5 Adventure" class="project-image">
+      <div class="project-content">
+        <div class="project-title">Third Person Adventure (UE5)</div>
+        <div class="project-description">
+          Advanced animation, AI behavior, and visual effects built with C++ and Blueprints.
+          <br><a href="https://github.com/lordipio/ThirdPersonAdventureGame-UE5" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <img src="https://github.com/user-attachments/assets/73ca9c59-cacb-477e-b3ce-c22dc5bf6be3" alt="Galaga Clone" class="project-image">
+      <div class="project-content">
+        <div class="project-title">Galaga Clone (OpenGL)</div>
+        <div class="project-description">
+          2D gameplay using VAOs/VBOs and matrix transformations in OpenGL.
+          <br><a href="https://github.com/lordipio/SpaceBastard_OpenGLProject" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <img src="https://github.com/user-attachments/assets/83804995-2a7c-4dd5-bfed-a618eca06196" alt="AutiPlay" class="project-image">
+      <div class="project-content">
+        <div class="project-title">AutiPlay (Unity)</div>
+        <div class="project-description">
+          A persian educational game for children with ASD, designed with cognitive mini-games and joyful visuals.
+          <br><a href="https://github.com/lordipio/AutiPlay" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <img src="https://github.com/lordipio/EndlessRunnerGame-Unity/assets/88454144/18d488f3-776c-4f32-9c9d-ad0a9c8af103" alt="Endless Runner" class="project-image">
+      <div class="project-content">
+        <div class="project-title">Endless Runner Game (Unity)</div>
+        <div class="project-description">
+          Procedural level generation, object pooling, and mobile-friendly UI.
+          <br><a href="https://github.com/lordipio/EndlessRunnerGame-Unity" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <img src="https://github.com/lordipio/ShooterGame-UE4/assets/88454144/a55f0c9c-f408-462e-afb9-5244fde62284" alt="Shooter UE4" class="project-image">
+      <div class="project-content">
+        <div class="project-title">Third Person Shooter (UE4)</div>
+        <div class="project-description">
+          Core gameplay logic and C++-Blueprint integration for combat systems.
+          <br><a href="https://github.com/lordipio/ShooterGame-UE4" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <img src="https://github.com/user-attachments/assets/6003944f-a21c-4eb5-874e-609b87f5425f" alt="Premiere Extension" class="project-image">
+      <div class="project-content">
+        <div class="project-title">Premiere Pro Clip Shuffler</div>
+        <div class="project-description">
+          A custom extension for Adobe Premiere Pro to randomly shuffle clips in the timeline using CEP/JSX.
+          <br><a href="https://github.com/lordipio/PremierePro-Shuffle-Clips-Extension" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+    <img src="https://github.com/user-attachments/assets/4a1a7b6e-eea3-4cb6-abb4-dfc0e9af5ffd" alt="Google Docs Extension" class="project-image">
+    <div class="project-content">
+        <div class="project-title">English Stylizer for Google Docs</div>
+        <div class="project-description">
+        A Google Docs add-on that helps stylize English text.
+        <br><a href="https://github.com/lordipio/EnglishStylizerForGoogleDoc" target="_blank">View on GitHub →</a>
+        </div>
+    </div>
+    </div>
+
+
+  </div>
+</section>
+
+</section>
+
+<section class="section-box">
+  <h2 class="matrix-title" data-text="🧰 Skills"></h2>
+  <ul>
+    <li>Languages: <span class="white-inter">C++, C#, C, Java, JS, Python, SQL, Blueprint Scripting</span></li>
+    <li>Game Engines: <span class="white-inter">Unreal Engine 4/5, Unity</span></li>
+    <li>Graphics: <span class="white-inter">OpenGL, Shader Programming, SDL, GLSL</span></li>
+    <li>Concepts: <span class="white-inter">Game AI, Simulation, Object-Oriented Design, computer graphics </span></li>
+    <li>Tools: <span class="white-inter">Git, Azure, Visual Studio, visual studio code</span></li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2 class="matrix-title" data-text="🎸 Activities & Hobbies"></h2>
+  <p class="white-inter">
+    Passionate about storytelling through cinema and video games. Led the Amirkabir University Cinema Community and run a YouTube channel on movie reviews and film history. Also enjoys playing guitar and composing music.
+  </p>
+</section>
+
+
+<section class="section-box">
+  <h2 class="matrix-title" data-text="📬 Contact"></h2>
+  <ul>
+    <li>Email: <span class="green-inter"><a href="mailto:Amirali.Ahangari.Academic@gmail.com">Amirali.Ahangari.Academic@gmail.com</a></span></li>
+    <li>GitHub: <span class="green-inter"><a href="https://github.com/lordipio" target="_blank">github.com/lordipio</a></span></li>
+    <li>LinkedIn: <span class="green-inter"><a href="https://linkedin.com/in/amir-ali-ahangari-208315213" target="_blank">linkedin.com/in/amir-ali-ahangari</a></span></li>
+    <li>YouTube: <span class="green-inter"><a href="https://www.youtube.com/@AmirAli-bh7fi/videos" target="_blank">@me on YouTube</a></span></li>
+  </ul>
+</section>
+
+</div>
+<footer class="section-box">
+  Made with ❤️ by Amirali Ahangari | Hosted on GitHub Pages
+</footer>
+
+<!-- Matrix effect -->
+<script>
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = "アァイィウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = Array.from({ length: columns }).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#0F0";
+    ctx.font = `${fontSize}px monospace`;
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars.charAt(Math.floor(Math.random() * chars.length));
+      const x = i * fontSize;
+      const y = drops[i] * fontSize;
+
+      ctx.fillText(text, x, y);
+
+      if (y > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 33);
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+
+<script>
+  const scrambleLetters = "アァイィウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const matrixTitles = document.querySelectorAll('.matrix-title');
+
+  matrixTitles.forEach(title => {
+    const originalText = title.getAttribute('data-text');
+    let displayText = "";
+    let iteration = 0;
+
+    const interval = setInterval(() => {
+      displayText = originalText
+        .split('')
+        .map((char, i) => {
+          if (i < Math.floor(iteration)) return char;
+          if (char === ' ') return ' ';
+          return scrambleLetters[Math.floor(Math.random() * scrambleLetters.length)];
+        })
+        .join('');
+
+      title.textContent = displayText;
+
+      iteration += 0.3;
+
+      if (iteration >= originalText.length) {
+        title.textContent = originalText;
+        clearInterval(interval);
+      }
+    }, 55); // سرعت اسکرامبل
+  });
+</script>
+
+</body>
+</html>
