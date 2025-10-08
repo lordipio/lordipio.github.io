@@ -81,7 +81,16 @@ a:hover {
     0 0 10px #39ff14,
     0 0 15px #39ff14;
 }
+.youtube-link {
+  color: #ff3333; /* YouTube red */
+  text-shadow: 0 0 8px #ff0000;
+  font-weight: 600;
+}
 
+.youtube-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
+}
 @keyframes neonPulse {
   0% {
     text-shadow:
@@ -103,7 +112,28 @@ a:hover {
   text-decoration: underline;
   font-family: 'Inter', sans-serif;
 }
+/* --- badges for course progress etc. --- */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  margin-left: 0.4rem;
+  border: 1px solid #006600;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: #001900;
+  color: #b8ffb8;
+  box-shadow: 0 0 8px #003300;
+  text-shadow: 0 0 6px #39ff14;
+}
 
+.badge-progress {
+  background: #0a2b0a;
+  color: #cfffbc;
+  border-color: #00aa00;
+  box-shadow: 0 0 10px #004400;
+}
 .white-inter a:hover,
 .green-inter a:hover {
   color: #ffff66;
@@ -327,7 +357,7 @@ h2::after {
 <h2 class="matrix-title" data-text="Education"></h2>
   <ul>
     <li><strong>Bachelor of Industrial Engineering</strong>, Amirkabir University of Technology (Tehran Polytechnic)<br>
-    <span class="white-inter">Sept 2020 – Present | GPA: 3.44/4.00 (Converted from 16.40/20)</span></li>
+    <span class="white-inter">Sept 2020 – Aug 2025 | GPA: 3.46/4.00 (Converted from 16.46/20)</span></li>
   </ul>
 </section>
 
@@ -336,19 +366,57 @@ h2::after {
   <p class="white-inter">Computer Graphics, HCI, Game Programming, Engine Programming, Software Engineering</p>
 </section>
 
-<section class="section-box">
+<!-- <section class="section-box">
 <h2 class="matrix-title" data-text="Research Experience"></h2>
   <ul>
-    <li><strong>Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder</strong> – In Preparation<br>
+    <li><strong>Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder</strong><br>
       <span class="white-inter">Designed and developed a Unity-based educational game for enhancing cognitive, sensory, and social skills in children with ASD.</span>
+    </li>
+  </ul>
+</section> -->
+
+<!-- <section class="section-box">
+  <h2 class="matrix-title" data-text="Research Experience"></h2>
+  <ul>
+    <li>
+      <strong>
+        Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder — 
+        <a href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener">View on GitHub</a>
+      </strong>
+      <br>
+      <span class="white-inter">
+        Developed an educational Unity-based game to support cognitive and sensory development in children with Autism Spectrum Disorder. Features three interactive stages—Matching, Sorting, and Pattern recognition—designed to enhance focus, classification, and logical thinking through calm visuals and gentle sound design.
+      </span>
+    </li>
+  </ul>
+</section> -->
+
+
+<section class="section-box">
+  <h2 class="matrix-title" data-text="Research Experience"></h2>
+  <ul>
+    <li>
+      <strong>
+        Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder
+      </strong><br>
+      <strong>
+        <a href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener">
+          View on GitHub
+        </a>
+      </strong><br>
+      <span class="white-inter">
+        Developed an educational Unity-based game to support cognitive and sensory development in children with Autism Spectrum Disorder. Features three interactive stages—Matching, Sorting, and Pattern recognition—designed to enhance focus, classification, and logical thinking through calm visuals and gentle sound design.
+      </span>
     </li>
   </ul>
 </section>
 
+
 <section class="section-box">
 <h2 class="matrix-title" data-text="Publications"></h2>
   <ul>
-    <li><strong>Solution Approaches in Disaster Management</strong> – In Preparation<br>
+    <li><strong>Solution Approaches in Disaster Management</strong>
+    <span class="badge badge-progress">In progress</span><br>
       <span class="white-inter">
         • Conducted a comprehensive literature review on optimization models and algorithms in disaster management.<br>
         • Analyzed existing solution approaches for logistical challenges during disaster response.
@@ -364,11 +432,23 @@ h2::after {
       <span class="white-inter">Taught OOP, Dijkstra, A* algorithms; assisted in optimization and design techniques.</span>
     </li>
       <br>
-
-    <li><strong>Teaching Assistant, Gamification</strong> (2024–Present)<br>
+    <li><strong>Teaching Assistant, Gamification</strong> (2024–2025)<br>
       <span class="white-inter">Led discussions on gamification principles; helped design gamified projects.</span>
     </li>
+      <br>
+    <li>
+    <strong>Co-Instructor, Udemy Course – “Main Menu UI in Unreal Engine 5”</strong>
+    <span class="badge badge-progress">In progress</span>
+    <br>
+    <span class="white-inter">
+      Co-instructing a practical course on building a modern Main Menu system in Unreal Engine using UMG widgets. Students learn to create animated navigation, Credits, and Settings pages (Graphics, Display, Audio, Key Remapping) with persistent data handled through Unreal’s Save System.
+      Developed in collaboration with 
+      <a href="https://www.udemy.com/user/alireza-emami-9/" target="_blank" rel="noopener">Alireza Emami</a>.
+    </span>
+    <br>
+  </li>
   </ul>
+
 </section>
 
 <section class="section-box">
@@ -528,9 +608,14 @@ h2::after {
 
 <section class="section-box">
   <h2 class="matrix-title" data-text="Activities & Hobbies"></h2>
-  <p class="white-inter">
-    Passionate about storytelling through cinema and video games. Led the Amirkabir University Cinema Community and run a YouTube channel on movie reviews and film history. Also enjoys playing guitar and composing music.
-  </p>
+  <ul class="white-inter">
+      <li>Runs a       <a href="https://www.youtube.com/@lordipio" target="_blank" rel="noopener" class="youtube-link">
+          YouTube channel
+        </a>  on film reviews and movie analysis.</li>
+    <li>Passionate about storytelling through cinema and video games.</li>
+    <li>Led the Amirkabir University Cinema Community.</li>
+    <li>Enjoys playing guitar and composing music.</li>
+  </ul>
 </section>
 
 
@@ -540,7 +625,7 @@ h2::after {
     <li>Email: <span class="green-inter"><a href="mailto:Amirali.Ahangari.Academic@gmail.com">Amirali.Ahangari.Academic@gmail.com</a></span></li>
     <li>GitHub: <span class="green-inter"><a href="https://github.com/lordipio" target="_blank">github.com/lordipio</a></span></li>
     <li>LinkedIn: <span class="green-inter"><a href="https://linkedin.com/in/amir-ali-ahangari-208315213" target="_blank">linkedin.com/in/amir-ali-ahangari</a></span></li>
-    <li>YouTube: <span class="green-inter"><a href="https://www.youtube.com/@AmirAli-bh7fi/videos" target="_blank">@me on YouTube</a></span></li>
+    <li>Project Demos: <span class="green-inter"><a href="https://www.youtube.com/@AmirAli-bh7fi/videos" target="_blank">@me on YouTube</a></span></li>
   </ul>
 </section>
 
@@ -625,5 +710,6 @@ h2::after {
 
 </body>
 </html>
+
 
 
