@@ -1,807 +1,2906 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Amirali Ahangari</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Amirali Ahangari — game developer focused on gameplay systems, computer graphics, simulation, and Unreal Engine.">
+  <meta name="theme-color" content="#000000">
+  <title>Amirali Ahangari — Game Developer</title>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+    :root {
+      --bg: #000000;
+      --green: #39ff6a;
+      --green-soft: #9affb2;
+      --green-dim: #168734;
+      --line: rgba(57, 255, 106, 0.16);
+      --line-strong: rgba(57, 255, 106, 0.32);
+      --text: #f3f6f3;
+      --muted: #a1ada4;
+      --surface: rgba(0, 5, 2, 0.78);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --max: 1080px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
 
     body {
-      font-family: 'Share Tech Mono', monospace;
+      position: relative;
       margin: 0;
-      background: black;
-      color: #00d600;
-      overflow-x: hidden;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 4px;
+    }
+
+    img,
+    video {
+      display: block;
+      max-width: 100%;
+    }
+
+    ::selection {
+      background: var(--green);
+      color: #001406;
     }
 
     #matrixCanvas {
       position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
+      inset: 0;
+      z-index: 0;
       width: 100%;
       height: 100%;
-      background: black;
+      pointer-events: none;
+      opacity: 0.58;
+      transition: opacity 180ms ease, filter 180ms ease;
     }
 
-    header {
-      background: #001100e6;
-      color: #00ff00;
-      text-align: center;
-      padding: 3.5rem 1rem 2rem;
-      box-shadow: 0 0 20px #003300;
+    .matrix-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg,
+          rgba(0, 0, 0, 0.10) 0%,
+          rgba(0, 0, 0, 0.38) 16%,
+          rgba(0, 0, 0, 0.48) 50%,
+          rgba(0, 0, 0, 0.38) 84%,
+          rgba(0, 0, 0, 0.10) 100%);
     }
 
-    header h1 {
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 50;
+      transform: translateY(-160%);
+      padding: 8px 12px;
+      background: #001607;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      width: min(var(--max), calc(100% - 40px));
+      height: 58px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .brand::before {
+      content: "> ";
+      color: var(--green-dim);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #b8c3ba;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .nav a {
+      transition: color 150ms ease;
+    }
+
+    .nav a:hover {
+      color: var(--green);
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+      background: linear-gradient(180deg, rgba(0, 3, 1, 0.44), rgba(0, 3, 1, 0.56));
+      border-left: 1px solid rgba(57, 255, 106, 0.05);
+      border-right: 1px solid rgba(57, 255, 106, 0.05);
+    }
+
+    .hero {
+      min-height: min(690px, calc(100vh - 58px));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 96px 72px 90px;
+    }
+
+    .hero-kicker {
+      margin: 0 0 20px;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 900px;
       margin: 0;
-      font-size: 2.8rem;
-      text-shadow: 0 0 4px #00ff00;
+      color: #f7fff8;
+      font-family: var(--mono);
+      font-size: clamp(44px, 7vw, 80px);
+      font-weight: 600;
+      line-height: 0.98;
+      letter-spacing: -0.06em;
     }
 
-    header p {
-      margin-top: 0.5rem;
-      font-size: 1.1rem;
-      color: #33ff33;
+    .hero-role {
+      margin: 26px 0 0;
+      color: var(--green-soft);
+      font-family: var(--mono);
+      font-size: clamp(16px, 2vw, 20px);
     }
 
-    .wrapper {
-      max-width: 960px;
-      margin: 3rem auto;
-      background: #000000e3;
-      padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 0 30px #002200;
+    .hero-intro {
+      max-width: 680px;
+      margin: 22px 0 0;
+      color: #c3cbc5;
+      font-size: clamp(17px, 2vw, 20px);
+      line-height: 1.65;
     }
 
-    h2 {
-      color: #39ff14;
-      border-bottom: 1px solid #006600;
-      padding-bottom: 0.4rem;
-      margin-top: 2rem;
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 34px;
+      font-family: var(--mono);
+      font-size: 13px;
     }
 
-    ul {
-      padding-left: 1.5rem;
+    .hero-actions a,
+    .text-link {
+      color: var(--green);
+      border-bottom: 1px solid var(--green-dim);
+      transition: border-color 150ms ease, color 150ms ease;
     }
 
-a {
-  color: #00bfff;
-  text-decoration: underline;
-  font-family: 'Inter', sans-serif;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-}
+    .hero-actions a:hover,
+    .text-link:hover {
+      color: #baffc9;
+      border-color: var(--green);
+    }
 
-a:hover {
-  color: #39ff14;
-  animation: neonPulse 0.2s ease-in-out infinite alternate;
-  text-shadow:
-    0 0 5px #39ff14,
-    0 0 10px #39ff14,
-    0 0 15px #39ff14;
-}
-.youtube-link {
-  color: #ff3333; /* YouTube red */
-  text-shadow: 0 0 8px #ff0000;
-  font-weight: 600;
-}
+    .hero-quote {
+      max-width: 680px;
+      margin: 48px 0 0;
+      padding: 2px 0 2px 20px;
+      border-left: 2px solid var(--green-dim);
+    }
 
-.youtube-link:hover {
-  color: #ffffff;
-  text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
-}
-@keyframes neonPulse {
-  0% {
-    text-shadow:
-      0 0 5px #39ff14,
-      0 0 10px #39ff14,
-      0 0 15px #39ff14;
-  }
-  100% {
-    text-shadow:
-      0 0 7px #39ff14,
-      0 0 15px #39ff14,
-      0 0 20px #39ff14;
-  }
-}
+    .hero-quote p {
+      margin: 0;
+      color: #aeb9b0;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.75;
+    }
 
-.white-inter a,
-.green-inter a {
-  color: #00bfff;
-  text-decoration: underline;
-  font-family: 'Inter', sans-serif;
-}
-/* --- badges for course progress etc. --- */
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.6rem;
-  margin-left: 0.4rem;
-  border: 1px solid #006600;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  background: #001900;
-  color: #b8ffb8;
-  box-shadow: 0 0 8px #003300;
-  text-shadow: 0 0 6px #39ff14;
-}
+    .hero-quote cite {
+      display: block;
+      margin-top: 8px;
+      color: var(--green-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-style: normal;
+    }
 
-.badge-progress {
-  background: #0a2b0a;
-  color: #cfffbc;
-  border-color: #00aa00;
-  box-shadow: 0 0 10px #004400;
-}
-.white-inter a:hover,
-.green-inter a:hover {
-  color: #ffff66;
-  text-shadow: 0 0 6px #ffff66;
-}
+    .section {
+      scroll-margin-top: 84px;
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 58px;
+      padding: 72px;
+      border-top: 1px solid var(--line);
+    }
 
-    footer {
+    .section-title {
+      margin: 0;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+      letter-spacing: 0.04em;
+    }
+
+    .section-title::before {
+      content: "> ";
+      color: var(--green-dim);
+    }
+
+    .section-body {
+      min-width: 0;
+    }
+
+    .section-body > :first-child {
+      margin-top: 0;
+    }
+
+    .section-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .lead-copy {
+      max-width: 720px;
+      margin: 0;
+      color: #d8ded9;
+      font-size: 18px;
+      line-height: 1.78;
+    }
+
+    .about-story {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 156px;
+      align-items: center;
+      gap: 34px;
+    }
+
+    .about-copy .lead-copy + .lead-copy {
+      margin-top: 20px;
+    }
+
+    .about-copy {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-copy.is-visible {
+      animation: aboutPassageBoot 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .about-copy::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(120, 255, 151, 0.10) 0,
+        rgba(120, 255, 151, 0.10) 1px,
+        transparent 1px,
+        transparent 5px
+      );
+      opacity: 0.62;
+      mix-blend-mode: screen;
+    }
+
+    .about-copy::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      right: 0;
+      top: -44px;
+      height: 44px;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(57, 255, 106, 0) 0%,
+        rgba(57, 255, 106, 0.07) 28%,
+        rgba(89, 255, 128, 0.22) 44%,
+        rgba(185, 255, 201, 0.62) 50%,
+        rgba(89, 255, 128, 0.22) 56%,
+        rgba(57, 255, 106, 0.07) 72%,
+        rgba(57, 255, 106, 0) 100%
+      );
+      box-shadow: 0 0 18px rgba(57, 255, 106, 0.16);
+      mix-blend-mode: screen;
+    }
+
+    .about-copy.is-visible::after {
+      animation: aboutPassageScan 3.4s linear 140ms infinite;
+    }
+
+    @keyframes aboutPassageBoot {
+      0% { opacity: 0.18; transform: translateY(7px); filter: blur(1.4px); }
+      38% { opacity: 1; transform: translateY(0); filter: blur(0); }
+      44% { transform: translateX(1px); }
+      50% { transform: translateX(-1px); }
+      56%, 100% { opacity: 1; transform: translate(0, 0); filter: blur(0); }
+    }
+
+    @keyframes aboutPassageScan {
+      0% { top: -44px; opacity: 0; }
+      8% { opacity: 0.92; }
+      88% { opacity: 0.92; }
+      100% { top: calc(100% + 8px); opacity: 0; }
+    }
+
+    .about-visual {
+      position: relative;
+      width: 156px;
+      justify-self: end;
+      padding: 0;
+      appearance: none;
+      background: none;
+      border: 0;
+      color: var(--green);
       text-align: center;
-      padding: 1.5rem;
-      color: #00cc00;
-      font-size: 0.9rem;
+      cursor: pointer;
+      font: inherit;
     }
 
-    .quote-box {
-      border-left: 4px solid #00ff00;
-      background-color: #001100cc;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-      font-style: italic;
-      color: #99ff99;
+    .controller-svg {
+      display: block;
+      width: 156px;
+      height: auto;
+      overflow: visible;
+      color: rgba(57, 255, 106, 0.72);
+      filter: drop-shadow(0 0 9px rgba(57, 255, 106, 0.10));
+      animation: controllerFloat 5s ease-in-out infinite;
+      transition: color 180ms ease, filter 180ms ease;
+    }
+
+    .controller-shell,
+    .controller-cable,
+    .controller-panel,
+    .controller-detail,
+    .controller-button,
+    .controller-dpad path {
+      vector-effect: non-scaling-stroke;
+      transition: fill 160ms ease, stroke 160ms ease, filter 160ms ease;
+    }
+
+    .controller-shell {
+      fill: rgba(0, 14, 5, 0.70);
+      stroke: currentColor;
+      stroke-width: 1.5;
+    }
+
+    .controller-cable {
+      fill: none;
+      stroke: rgba(57, 255, 106, 0.40);
+      stroke-width: 1.4;
+      stroke-linecap: round;
+    }
+
+    .controller-panel {
+      fill: rgba(0, 8, 3, 0.76);
+      stroke: rgba(57, 255, 106, 0.24);
+      stroke-width: 1;
+    }
+
+    .controller-detail,
+    .controller-button {
+      fill: rgba(0, 16, 5, 0.90);
+      stroke: rgba(57, 255, 106, 0.62);
+      stroke-width: 1.25;
+    }
+
+    .controller-seam {
+      fill: none;
+      stroke: rgba(57, 255, 106, 0.28);
+    }
+
+    .controller-dpad path {
+      fill: rgba(57, 255, 106, 0.40);
+      stroke: rgba(57, 255, 106, 0.70);
+      stroke-width: 1;
+    }
+
+    .controller-label,
+    .controller-face-label {
+      fill: rgba(114, 255, 146, 0.58);
+      font-family: var(--mono);
+      pointer-events: none;
+      user-select: none;
+      transition: fill 160ms ease;
+    }
+
+    .controller-label {
+      font-size: 8px;
+      letter-spacing: 0.06em;
+      text-anchor: middle;
+    }
+
+    .controller-face-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .about-visual:hover .controller-svg {
+      color: rgba(114, 255, 146, 0.95);
+      filter: drop-shadow(0 0 11px rgba(57, 255, 106, 0.22));
+    }
+
+    .about-visual:hover .controller-button-a,
+    .about-visual:focus-visible .controller-button-a {
+      fill: var(--green);
+      stroke: #caffd5;
+      filter: drop-shadow(0 0 5px rgba(57, 255, 106, 0.9));
+    }
+
+    .about-visual:hover .controller-face-label-a,
+    .about-visual:focus-visible .controller-face-label-a {
+      fill: #00310c;
+    }
+
+    .about-visual.is-active .controller-svg {
+      color: #9affb2;
+      animation: controllerRumble 340ms linear, controllerFloat 5s ease-in-out 340ms infinite;
+      filter: drop-shadow(0 0 15px rgba(57, 255, 106, 0.48));
+    }
+
+    .about-visual.is-active .controller-button,
+    .about-visual.is-active .controller-dpad path,
+    .about-visual.is-active .controller-detail {
+      fill: var(--green);
+      filter: drop-shadow(0 0 5px rgba(57, 255, 106, 0.80));
+    }
+
+    .about-visual.is-active .controller-face-label {
+      fill: #00310c;
+    }
+
+    .about-press-start {
+      display: inline-block;
+      margin-top: 7px;
+      color: #72ff92;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      white-space: nowrap;
+      animation: pressStart 1.4s steps(1, end) infinite;
+    }
+
+    .about-controller-xp {
+      position: absolute;
+      top: 3px;
+      left: 50%;
+      color: #caffd5;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      pointer-events: none;
+      text-shadow: 0 0 8px rgba(57, 255, 106, 0.78);
+      transform: translate(-50%, 0);
+    }
+
+    .about-visual.is-active .about-controller-xp {
+      animation: xpPop 1.25s ease-out forwards;
+    }
+
+    body.controller-active #matrixCanvas {
+      opacity: 0.78;
+      filter: brightness(1.28) saturate(1.08);
+    }
+
+    @keyframes controllerFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes controllerRumble {
+      0%, 100% { transform: translate(0, 0) rotate(0); }
+      20% { transform: translate(-3px, 1px) rotate(-1deg); }
+      40% { transform: translate(3px, -1px) rotate(1deg); }
+      60% { transform: translate(-2px, -1px) rotate(-0.7deg); }
+      80% { transform: translate(2px, 1px) rotate(0.7deg); }
+    }
+
+    @keyframes xpPop {
+      0% { opacity: 0; transform: translate(-50%, 8px) scale(0.88); }
+      18% { opacity: 1; }
+      72% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -24px) scale(1.04); }
+    }
+
+    @keyframes pressStart {
+      0%, 58% { opacity: 0.9; }
+      59%, 100% { opacity: 0.32; }
+    }
+
+    .resume-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 28px;
+      padding-bottom: 4px;
+    }
+
+    .resume-row p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .resume-row a {
+      flex: 0 0 auto;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 13px;
+      border-bottom: 1px solid var(--green-dim);
+    }
+
+    .interest-line {
+      margin: 0;
+      color: #d8ded9;
+      font-size: 17px;
+      line-height: 1.9;
+    }
+
+    .interest-line span {
+      color: var(--green-dim);
+      padding: 0 8px;
+    }
+
+    .entries {
+      border-top: 1px solid var(--line);
+    }
+
+    .entry {
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .entry:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .entry:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .entry-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: baseline;
+    }
+
+    .entry h3 {
+      margin: 0;
+      color: #eff6f0;
+      font-size: 17px;
+      font-weight: 620;
+      line-height: 1.5;
+    }
+
+    .entry h3 a {
+      color: inherit;
+      border-bottom: 1px solid rgba(57, 255, 106, 0.38);
+    }
+
+    .entry h3 a:hover {
+      color: var(--green-soft);
+      border-color: var(--green);
+    }
+
+    .date,
+    .state {
+      color: var(--green-soft);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: nowrap;
+    }
+
+    .entry-subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .entry p:not(.entry-subtitle):not(.date) {
+      max-width: 720px;
+      margin: 11px 0 0;
+      color: #b9c3bb;
+    }
+
+    .entry ul {
+      max-width: 720px;
+      margin: 13px 0 0;
+      padding: 0;
+      list-style: none;
+      color: #b9c3bb;
+    }
+
+    .entry li {
+      position: relative;
+      padding-left: 18px;
+      margin-top: 5px;
+    }
+
+    .entry li::before {
+      content: "·";
+      position: absolute;
+      left: 2px;
+      color: var(--green-dim);
+    }
+
+    .entry-link {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 12px;
+      border-bottom: 1px solid var(--green-dim);
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 30px;
+      row-gap: 50px;
+    }
+
+    .project {
+      position: relative;
+      min-width: 0;
+      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .project:hover {
+      transform: translateY(-5px);
+    }
+
+    .project-media {
+      position: relative;
+      display: block;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #020804;
+      border: 1px solid var(--line);
+      transition: border-color 220ms ease, box-shadow 260ms ease;
+    }
+
+    .project-media::before,
+    .project-media::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .project-media::before {
+      inset: 0;
+      opacity: 0;
+      box-shadow:
+        inset 0 1px 0 rgba(142, 255, 168, 0.76),
+        inset 0 0 22px rgba(57, 255, 106, 0.08);
+      transition: opacity 220ms ease;
+    }
+
+    .project-media::after {
+      top: 0;
+      bottom: 0;
+      left: -62%;
+      width: 36%;
+      opacity: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(94, 255, 131, 0.05) 28%,
+        rgba(177, 255, 195, 0.22) 50%,
+        rgba(94, 255, 131, 0.05) 72%,
+        transparent
+      );
+      transform: skewX(-16deg);
+      transition: left 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 120ms ease;
+    }
+
+    .project-media img,
+    .project-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.82;
+      filter: saturate(0.76) contrast(1.04);
+      transition: opacity 180ms ease, filter 180ms ease, transform 280ms ease;
+    }
+
+    .project:hover .project-media img,
+    .project:hover .project-media video {
+      opacity: 1;
+      filter: saturate(1) contrast(1.04) brightness(1.04);
+      transform: scale(1.026);
+    }
+
+    .project:hover .project-media {
+      border-color: rgba(57, 255, 106, 0.76);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.34), 0 0 20px rgba(57, 255, 106, 0.09);
+    }
+
+    .project:hover .project-media::before {
+      opacity: 1;
+    }
+
+    .project:hover .project-media::after {
+      left: 126%;
+      opacity: 1;
+    }
+
+    .project-info {
+      padding-top: 16px;
+    }
+
+    .project-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .project h3 {
+      margin: 0;
+      color: #eef5ef;
+      font-size: 16px;
+      line-height: 1.45;
+      transition: color 180ms ease, text-shadow 180ms ease, transform 220ms ease;
+    }
+
+    .project:hover h3 {
+      color: #bfffcf;
+      text-shadow: 0 0 12px rgba(57, 255, 106, 0.22);
+      transform: translateX(3px);
+    }
+
+    .project-tech {
+      flex: 0 0 auto;
+      color: var(--green-soft);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      transition: color 180ms ease, text-shadow 180ms ease;
+    }
+
+    .project:hover .project-tech {
+      color: #8effa8;
+      text-shadow: 0 0 9px rgba(57, 255, 106, 0.22);
+    }
+
+    .project p {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .project .text-link {
+      display: inline-block;
+      margin-top: 11px;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .skill-list {
+      margin: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 24px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .skill-row dt {
+      margin: 0;
+      color: var(--green-soft);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .skill-row dd {
+      margin: 0;
+      color: #c2cbc4;
+      font-size: 14px;
+    }
+
+    .language-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+    }
+
+    .language {
+      border-top: 1px solid var(--line);
+      padding-top: 17px;
+    }
+
+    .language h3 {
+      margin: 0;
+      color: #eef5ef;
+      font-size: 16px;
+    }
+
+    .language p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .scores {
+      color: #c4cec6 !important;
+      font-family: var(--mono);
+      font-size: 11px !important;
+      line-height: 1.9;
+    }
+
+    .plain-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .plain-list li {
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+      color: #bec8c0;
+    }
+
+    .plain-list a {
+      color: var(--green-soft);
+      border-bottom: 1px solid var(--green-dim);
+    }
+
+    .contact-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .contact-list li {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 20px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .contact-label {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .contact-list a {
+      width: fit-content;
+      max-width: 100%;
+      color: var(--green-soft);
+      overflow-wrap: anywhere;
+      border-bottom: 1px solid var(--green-dim);
+    }
+
+    /* Links should read as links at a glance, without adding button clutter. */
+    .page main a:not(.project-media),
+    .page .hero-actions a,
+    .page .resume-row a {
+      color: #72ff92;
+      border-bottom: 0;
+      font-weight: 600;
+      text-decoration-line: underline;
+      text-decoration-color: #39ff6a;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 4px;
+      text-decoration-skip-ink: auto;
+      transition: color 150ms ease, text-shadow 150ms ease, text-decoration-color 150ms ease;
+    }
+
+    .page main a:not(.project-media):hover,
+    .page .hero-actions a:hover,
+    .page .resume-row a:hover {
+      color: #dcffe4;
+      text-decoration-color: #9affb2;
+      text-shadow: 0 0 10px rgba(57, 255, 106, 0.55);
+    }
+
+    .project-media[href] {
+      cursor: pointer;
+      border-color: rgba(57, 255, 106, 0.34);
+    }
+
+    .project-media[href]:hover {
+      border-color: #39ff6a;
+      box-shadow: 0 0 0 1px rgba(57, 255, 106, 0.18), 0 0 18px rgba(57, 255, 106, 0.10);
+    }
+
+    /* A little more phosphor in the typography, without turning the page into UI chrome. */
+    .section-title {
+      text-shadow: 0 0 14px rgba(57, 255, 106, 0.18);
+    }
+
+    .section-title::after {
+      content: "_";
+      display: inline-block;
+      margin-left: 6px;
+      color: rgba(154, 255, 178, 0.72);
+      text-shadow: 0 0 9px rgba(57, 255, 106, 0.42);
+      animation: terminalCursor 1.18s steps(1, end) infinite;
+    }
+
+    .hero h1 {
+      text-shadow: 0 0 34px rgba(57, 255, 106, 0.07);
+      animation: signalIn 720ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+    }
+
+    .hero-kicker {
+      animation: signalIn 560ms cubic-bezier(0.22, 1, 0.36, 1) 20ms both;
+    }
+
+    .hero-role {
+      animation: signalIn 650ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both;
+    }
+
+    .hero-role::after {
+      content: " _";
+      color: rgba(57, 255, 106, 0.72);
+      animation: terminalCursor 1.18s steps(1, end) infinite;
+    }
+
+    .hero-intro,
+    .hero-actions,
+    .hero-quote {
+      animation: signalIn 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .hero-intro { animation-delay: 240ms; }
+    .hero-actions { animation-delay: 320ms; }
+    .hero-quote { animation-delay: 400ms; }
+
+    @keyframes terminalCursor {
+      0%, 52% { opacity: 0.92; }
+      53%, 100% { opacity: 0.18; }
+    }
+
+    @keyframes signalIn {
+      0% { opacity: 0; transform: translateY(8px); filter: blur(2px); }
+      55% { opacity: 1; transform: translateY(0); filter: blur(0); }
+      62% { transform: translateX(1px); }
+      69%, 100% { opacity: 1; transform: translate(0, 0); filter: blur(0); }
+    }
+
+    .entry {
       position: relative;
     }
 
-    .quote-box::before {
-      content: "“";
-      font-size: 2rem;
-      color: #00ff00;
+    .entry::before {
+      content: "";
       position: absolute;
+      left: -16px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      opacity: 0;
+      background: linear-gradient(180deg, transparent, var(--green), transparent);
+      box-shadow: 0 0 8px rgba(57, 255, 106, 0.46);
+      transform: scaleY(0.28);
+      transition: opacity 180ms ease, transform 260ms ease;
+    }
+
+    .entry h3,
+    .entry p {
+      transition: color 180ms ease, text-shadow 180ms ease;
+    }
+
+    .entry:hover::before {
+      opacity: 0.78;
+      transform: scaleY(1);
+    }
+
+    .entry:hover h3 {
+      color: #c9ffd5;
+      text-shadow: 0 0 12px rgba(57, 255, 106, 0.16);
+    }
+
+    .entry:hover p:not(.entry-subtitle) {
+      color: #c5cec7;
+    }
+
+    .entry-subtitle::before {
+      content: "// ";
+      color: var(--green-dim);
+      font-family: var(--mono);
+    }
+
+    .date::before,
+    .state::before {
+      content: "[";
+      margin-right: 2px;
+      color: var(--green-dim);
+    }
+
+    .date::after,
+    .state::after {
+      content: "]";
+      margin-left: 2px;
+      color: var(--green-dim);
+    }
+
+    .skill-row,
+    .language,
+    .plain-list li,
+    .contact-list li {
+      transition: transform 220ms ease, border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+    }
+
+    .skill-row:hover,
+    .plain-list li:hover,
+    .contact-list li:hover {
+      transform: translateX(4px);
+      border-color: rgba(57, 255, 106, 0.34);
+      background: linear-gradient(90deg, rgba(57, 255, 106, 0.035), transparent 58%);
+    }
+
+    .skill-row dt::before {
+      content: "> ";
+      color: var(--green-dim);
+    }
+
+    .skill-row:hover dt,
+    .contact-list li:hover .contact-label {
+      color: var(--green);
+      text-shadow: 0 0 9px rgba(57, 255, 106, 0.20);
+    }
+
+    .language:hover {
+      transform: translateY(-3px);
+      border-color: rgba(57, 255, 106, 0.42);
+    }
+
+    .fx-ready .fx-reveal {
+      opacity: 0.18;
+      transform: translateY(9px);
+      filter: blur(0.8px);
+      transition: opacity 520ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1), filter 520ms ease;
+    }
+
+    .fx-ready .fx-reveal.fx-in {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .fx-ready .skill-row.fx-reveal.fx-in:hover,
+    .fx-ready .plain-list li.fx-reveal.fx-in:hover,
+    .fx-ready .contact-list li.fx-reveal.fx-in:hover {
+      transform: translateX(4px);
+    }
+
+    .fx-ready .language.fx-reveal.fx-in:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Project hover: retro CRT selection screen — no lift, tilt, or pointer-follow glow. */
+    .projects {
+      counter-reset: project-select;
+    }
+
+    .project {
+      counter-increment: project-select;
+      isolation: isolate;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+
+    .project::before {
+      content: "▶ SELECTED // " counter(project-select, decimal-leading-zero);
+      position: absolute;
+      z-index: 6;
+      top: 10px;
       left: 10px;
-      top: 5px;
+      padding: 3px 7px 3px 6px;
+      border-left: 2px solid #baffc9;
+      background: rgba(0, 8, 3, 0.90);
+      color: #baffc9;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.07em;
+      opacity: 0;
+      transform: none;
+      pointer-events: none;
+      transition: opacity 100ms linear;
+      box-shadow: 4px 0 0 rgba(57, 255, 106, 0.09);
     }
 
-    .quote-author {
-      margin-top: 0.5rem;
-      text-align: right;
-      font-style: normal;
-      font-weight: bold;
-      color: #66ff66;
+    .project:hover,
+    .project:focus-within {
+      transform: none;
+      filter: none;
     }
 
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
+    .project:hover::before,
+    .project:focus-within::before {
+      opacity: 1;
+      animation: selectedPulse 920ms steps(2, end) infinite;
     }
 
-    .project-card {
-      background-color: #000;
-      border-radius: 12px;
-      box-shadow: 0 0 16px #003300;
+    .project-media {
+      transform: none;
+      transform-style: flat;
+      will-change: auto;
+      transition: border-color 120ms linear, box-shadow 120ms linear;
+    }
+
+    .project-media::before {
+      inset: 0;
+      opacity: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 3px,
+        rgba(57, 255, 106, 0.10) 3px,
+        rgba(57, 255, 106, 0.10) 4px
+      );
+      box-shadow:
+        inset 0 0 0 2px rgba(57, 255, 106, 0.72),
+        inset 0 0 28px rgba(57, 255, 106, 0.10);
+      transition: opacity 100ms linear;
+    }
+
+    .project-media::after {
+      top: -5px;
+      right: 0;
+      bottom: auto;
+      left: 0;
+      width: auto;
+      height: 3px;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent 0%, #39ff6a 12%, #c9ffd5 50%, #39ff6a 88%, transparent 100%);
+      box-shadow: 0 0 10px rgba(57, 255, 106, 0.70);
+      transform: none;
+      transition: none;
+    }
+
+    .project:hover .project-media,
+    .project:focus-within .project-media {
+      border-color: #39ff6a;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.85), 0 0 0 2px rgba(57, 255, 106, 0.30);
+      transform: none;
+    }
+
+    .project:hover .project-media::before,
+    .project:focus-within .project-media::before {
+      opacity: 0.62;
+    }
+
+    .project:hover .project-media::after,
+    .project:focus-within .project-media::after {
+      left: 0;
+      opacity: 0.82;
+      animation: projectRaster 1.28s linear infinite;
+    }
+
+    .project:hover .project-media img,
+    .project:hover .project-media video,
+    .project:focus-within .project-media img,
+    .project:focus-within .project-media video {
+      opacity: 1;
+      filter: saturate(0.88) contrast(1.10) brightness(1.04);
+      transform: none;
+    }
+
+    .project-info {
+      position: relative;
+    }
+
+    .project-info::before {
+      display: none;
+    }
+
+    .project h3::after {
+      content: " █";
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.68em;
+      opacity: 0;
+    }
+
+    .project:hover h3,
+    .project:focus-within h3 {
+      color: #d6ffdf;
+      text-shadow: 1px 0 rgba(57, 255, 106, 0.62), -1px 0 rgba(90, 252, 255, 0.20);
+      transform: none;
+      animation: projectTitleLock 260ms steps(2, end) 1;
+    }
+
+    .project:hover h3::after,
+    .project:focus-within h3::after {
+      opacity: 0.92;
+      animation: terminalCursor 820ms steps(1, end) infinite;
+    }
+
+    .project:hover .project-tech,
+    .project:focus-within .project-tech {
+      color: #9affb2;
+      text-shadow: none;
+    }
+
+    .project p {
+      transition: color 120ms linear;
+    }
+
+    .project:hover p,
+    .project:focus-within p {
+      color: #b6c1b8;
+      text-shadow: none;
+    }
+
+    @keyframes projectRaster {
+      0% { top: -5px; }
+      100% { top: calc(100% + 3px); }
+    }
+
+    @keyframes selectedPulse {
+      0%, 72% { color: #baffc9; }
+      73%, 100% { color: #39ff6a; }
+    }
+
+    @keyframes projectTitleLock {
+      0% { opacity: 0.50; transform: translateX(-2px); }
+      35% { opacity: 1; transform: translateX(2px); }
+      70%, 100% { opacity: 1; transform: translateX(0); }
+    }
+
+    /* The screens stay Matrix; the hardware itself is warm, physical 80s arcade plastic. */
+    .arcade-rail {
+      --cabinet-accent: #e4573d;
+      --cabinet-secondary: #efbf48;
+      position: absolute;
+      z-index: 4;
+      width: 162px;
+      padding: 9px;
+      border: 2px solid #292720;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 24%),
+        repeating-linear-gradient(135deg, rgba(81, 73, 57, 0.045) 0 6px, transparent 6px 12px),
+        #c9c0a5;
+      box-shadow:
+        0 0 0 2px #776f5c,
+        0 8px 24px rgba(0, 0, 0, 0.50),
+        inset 0 0 20px rgba(67, 57, 40, 0.10);
+      color: #27251f;
+      font-family: var(--mono);
+    }
+
+    .arcade-rail::before {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      inset: 4px;
+      border: 1px dashed rgba(54, 49, 39, 0.20);
+    }
+
+    .arcade-rail::after {
+      content: "PLAY!  ↓";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 10px);
+      min-width: 70px;
+      padding: 5px 7px 4px;
+      border: 2px solid var(--cabinet-accent);
+      background: #27251f;
+      color: #fff0a4;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.08em;
+      text-align: center;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.48);
+      text-shadow: 1px 1px 0 #000;
+      animation: playCallout 1.05s steps(2, end) infinite;
+    }
+
+    .arcade-rail--left {
+      left: max(6px, calc((100vw - var(--max)) / 2 - 172px));
+      top: 33.333%;
+    }
+
+    .arcade-rail--right {
+      --cabinet-accent: #397da4;
+      --cabinet-secondary: #d95b49;
+      right: max(6px, calc((100vw - var(--max)) / 2 - 172px));
+      top: 66.667%;
+    }
+
+    .arcade-marquee {
+      position: relative;
+      z-index: 1;
       overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border: 1px solid #003300;
+      margin: -2px -1px 7px;
+      padding: 7px 5px 6px;
+      border: 2px solid #27251f;
+      background:
+        linear-gradient(115deg, var(--cabinet-accent) 0 29%, #25231e 29% 48%, var(--cabinet-secondary) 48% 64%, #25231e 64% 100%);
+      box-shadow: 0 3px 0 rgba(78, 69, 53, 0.42), inset 0 0 10px rgba(255, 255, 255, 0.08);
+      text-align: center;
     }
 
-    .project-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 0 20px #00ff00;
+    .arcade-marquee::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(135deg, transparent 0 7px, rgba(255, 255, 255, 0.035) 7px 8px);
     }
 
-.project-image {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  background-color: #002200;
-  display: block;
-}
-
-    .project-content {
-      padding: 1.2rem;
+    .arcade-marquee strong {
+      position: relative;
+      z-index: 1;
+      display: block;
+      color: #fff8df;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0.10em;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.48);
     }
 
-    .project-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #60ff60;
-      margin-bottom: 0.5rem;
+    .arcade-play {
+      position: relative;
+      z-index: 1;
+      display: block;
+      margin-top: 4px;
+      color: #fff0a4;
+      font-size: 8px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0.12em;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.55);
+      animation: arcadeBlink 920ms steps(1, end) infinite;
     }
 
-    .project-description {
-      font-size: 0.95rem;
+    .arcade-meta {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 2px 6px;
+      color: #5f594b;
+      font-size: 7px;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+
+    .arcade-status {
+      color: var(--cabinet-accent);
+      font-weight: 800;
+    }
+
+    .arcade-screen {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 5px;
+      overflow: hidden;
+      border: 4px solid #06140a;
+      outline: 1px solid rgba(57, 255, 106, 0.48);
+      border-radius: 2px;
+      background: #000;
+      appearance: none;
+      cursor: crosshair;
+      box-shadow: inset 0 0 18px rgba(57, 255, 106, 0.08), 0 3px 0 #001f0a;
+      transition: outline-color 120ms linear, box-shadow 120ms linear;
+    }
+
+    .arcade-screen::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      z-index: 2;
+      pointer-events: none;
+      background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(57, 255, 106, 0.065) 3px 4px);
+      mix-blend-mode: screen;
+    }
+
+    .arcade-screen:hover,
+    .arcade-screen:focus-visible,
+    .arcade-screen.is-live {
+      outline-color: var(--green);
+      box-shadow: inset 0 0 20px rgba(57, 255, 106, 0.12), 0 0 11px rgba(57, 255, 106, 0.15), 0 3px 0 #001f0a;
+    }
+
+    .arcade-screen canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      image-rendering: pixelated;
+      background: #000401;
+    }
+
+    .arcade-controls {
+      position: relative;
+      z-index: 1;
+      margin: 9px -1px 0;
+      padding: 7px 5px 5px;
+      border-top: 1px solid rgba(64, 57, 45, 0.42);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(70, 61, 45, 0.10));
+    }
+
+    .arcade-dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 24px);
+      grid-template-rows: repeat(2, 21px);
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .arcade-key {
+      width: 24px;
+      height: 20px;
+      padding: 0;
+      border: 1px solid #11110f;
+      border-radius: 2px;
+      background: #34332e;
+      color: #eee8d5;
+      font-family: var(--mono);
+      font-size: 9px;
+      line-height: 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #11110f, inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: transform 70ms linear, box-shadow 70ms linear, color 70ms linear, border-color 70ms linear;
+    }
+
+    .arcade-key:hover {
       color: #ffffff;
+      border-color: var(--cabinet-accent);
     }
 
-    .white-inter {
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
+    .arcade-key:active,
+    .arcade-key.is-held {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #11110f, inset 0 1px 3px rgba(0, 0, 0, 0.30);
     }
 
-    .white-inter a {
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
+    .arcade-key[data-snake-dir="up"] { grid-column: 2; grid-row: 1; }
+    .arcade-key[data-snake-dir="left"] { grid-column: 1; grid-row: 2; }
+    .arcade-key[data-snake-dir="down"] { grid-column: 2; grid-row: 2; }
+    .arcade-key[data-snake-dir="right"] { grid-column: 3; grid-row: 2; }
+
+    .arcade-breakout-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
 
-    .white-inter a:hover {
-      text-shadow: 0 0 6px #ffffff;
+    .arcade-breakout-controls .arcade-key {
+      width: 30px;
+      height: 24px;
+      border-color: #26231d;
+      border-radius: 50%;
+      background: var(--cabinet-accent);
+      color: #fff9e8;
+      line-height: 22px;
+      box-shadow: 0 3px 0 #1f1d18, inset 0 1px 0 rgba(255, 255, 255, 0.24);
     }
 
-    /* .green-inter {
-      color: #2dff3f;
-      font-family: 'Inter', sans-serif;
+    .arcade-breakout-controls #breakoutRight {
+      background: var(--cabinet-secondary);
     }
 
-    .green-inter a {
-      color: #2dff3f;
-      font-family: 'Inter', sans-serif;
+    .arcade-coin {
+      color: #6d4a22;
+      font-size: 7px;
+      letter-spacing: 0.06em;
+      text-shadow: none;
     }
 
-    .green-inter a:hover {
-      text-shadow: 0 0 6px #2dff3f;
-    } */
-
-    section:nth-of-type(1) p {
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
+    .arcade-help {
+      position: relative;
+      z-index: 1;
+      margin: 6px 0 0;
+      color: #5f594c;
+      font-size: 7px;
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+      text-align: center;
     }
 
-  .section-box {
-  background: #001400cc;
-  padding: 0.1rem 1rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0 16px #002200;
-  }
+    @keyframes arcadeBlink {
+      0%, 66% { opacity: 1; }
+      67%, 100% { opacity: 0.34; }
+    }
 
-  .section-box {
-  opacity: 0;
-  transform: translateY(40px);
-  animation: fadeUp 0.8s ease-out forwards;
-}
+    @keyframes playCallout {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, 3px); }
+    }
 
-.section-box:nth-of-type(1) { animation-delay: 0.3s; }
-.section-box:nth-of-type(2) { animation-delay: 0.5s; }
-.section-box:nth-of-type(3) { animation-delay: 0.7s; }
-.section-box:nth-of-type(4) { animation-delay: 0.9s; }
-.section-box:nth-of-type(5) { animation-delay: 1.1s; }
+    @media (max-width: 1439px) and (min-width: 1341px) {
+      .arcade-rail {
+        width: 138px;
+        padding: 6px;
+      }
 
-@keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+      .arcade-rail--left {
+        left: max(2px, calc((100vw - var(--max)) / 2 - 146px));
+      }
 
-h2 {
-  color: #39ff14;
-  position: relative;
-  overflow: hidden;
-}
+      .arcade-rail--right {
+        right: max(2px, calc((100vw - var(--max)) / 2 - 146px));
+      }
+    }
 
-h2::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(57, 255, 20, 0.3),
-    transparent
-  );
-  animation: shine 12s ease-in-out infinite;
-  z-index: 1;
-}
+    @media (max-width: 1340px) {
+      .arcade-rail {
+        display: none;
+      }
+    }
 
-@keyframes shine {
-  0%   { left: -100%; opacity: 1; }
-  16.6%  { left: 100%; opacity: 1; }
-  16.7%  { opacity: 0; }             
-  100% { left: 100%; opacity: 0; }  
-}
+    .footer {
+      position: relative;
+      z-index: 2;
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+      padding: 30px 72px 48px;
+      border-top: 1px solid var(--line);
+      color: #647069;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
 
+    @media (max-width: 900px) {
+      .hero,
+      .section,
+      .footer {
+        padding-left: 42px;
+        padding-right: 42px;
+      }
+
+      .section {
+        grid-template-columns: 170px minmax(0, 1fr);
+        gap: 38px;
+      }
+
+      .nav {
+        gap: 16px;
+      }
+
+      .nav a:nth-child(2),
+      .nav a:nth-child(3) {
+        display: none;
+      }
+
+      .project-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      body {
+        font-size: 15px;
+      }
+
+      #matrixCanvas {
+        opacity: 0.50;
+      }
+
+      .matrix-scrim {
+        background: rgba(0, 0, 0, 0.50);
+      }
+
+      .topbar-inner,
+      .page,
+      .footer {
+        width: min(100% - 26px, var(--max));
+      }
+
+      .nav {
+        gap: 13px;
+      }
+
+      .nav a:nth-child(1) {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 86px 24px 72px;
+      }
+
+      .hero h1 {
+        font-size: clamp(42px, 15vw, 64px);
+      }
+
+      .hero-intro {
+        font-size: 17px;
+      }
+
+      .section {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 52px 24px;
+      }
+
+      .section-title {
+        font-size: 13px;
+      }
+
+      .lead-copy {
+        font-size: 16px;
+      }
+
+      .about-story {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .about-visual {
+        justify-self: start;
+        margin-left: 4px;
+      }
+
+      .resume-row,
+      .entry-head {
+        align-items: flex-start;
+        grid-template-columns: 1fr;
+        flex-direction: column;
+      }
+
+      .resume-row {
+        display: flex;
+        gap: 14px;
+      }
+
+      .entry-head {
+        gap: 6px;
+      }
+
+      .date,
+      .state {
+        white-space: normal;
+      }
+
+      .projects {
+        grid-template-columns: 1fr;
+        row-gap: 42px;
+      }
+
+      .project-heading {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .skill-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .language-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-list li {
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .footer {
+        padding: 26px 24px 40px;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .topbar-inner {
+        height: 54px;
+      }
+
+      .nav a:nth-child(4) {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 72px;
+      }
+
+      .project-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .contact-list li {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
+
 <body>
+  <a class="skip-link" href="#content">Skip to content</a>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="matrix-scrim" aria-hidden="true"></div>
 
-<canvas id="matrixCanvas"></canvas>
+  <aside class="arcade-rail arcade-rail--left" aria-label="Snake mini game">
+    <div class="arcade-marquee">
+      <strong>SNAKE.EXE</strong>
+      <span class="arcade-play">★ PLAY ME! ★</span>
+    </div>
+    <div class="arcade-meta">
+      <span>1UP · 25¢</span>
+      <span class="arcade-status" id="snakeStatus">READY</span>
+    </div>
+    <button class="arcade-screen" id="snakeGame" type="button" aria-label="Play Snake. Click to start, then use the on-screen D-pad, arrow keys, or WASD.">
+      <canvas id="snakeCanvas" width="120" height="120" aria-hidden="true"></canvas>
+    </button>
+    <div class="arcade-controls" aria-label="Snake mouse controls">
+      <div class="arcade-dpad">
+        <button class="arcade-key" type="button" data-snake-dir="up" aria-label="Snake up">▲</button>
+        <button class="arcade-key" type="button" data-snake-dir="left" aria-label="Snake left">◀</button>
+        <button class="arcade-key" type="button" data-snake-dir="down" aria-label="Snake down">▼</button>
+        <button class="arcade-key" type="button" data-snake-dir="right" aria-label="Snake right">▶</button>
+      </div>
+    </div>
+    <p class="arcade-help">CLICK SCREEN TO START<br>MOUSE D-PAD · WASD</p>
+  </aside>
 
-<header>
-  <h1>Amirali Ahangari</h1>
-  <p>Game Developer | Graphics Enthusiast</p>
-</header>
+  <aside class="arcade-rail arcade-rail--right" aria-label="Breakout mini game">
+    <div class="arcade-marquee">
+      <strong>BREAKOUT.EXE</strong>
+      <span class="arcade-play">★ PLAY ME! ★</span>
+    </div>
+    <div class="arcade-meta">
+      <span>2UP · 25¢</span>
+      <span class="arcade-status" id="breakoutStatus">READY</span>
+    </div>
+    <button class="arcade-screen" id="breakoutGame" type="button" aria-label="Play Breakout. Click to start, then move the mouse over the screen or use left and right arrow keys or A and D.">
+      <canvas id="breakoutCanvas" width="120" height="120" aria-hidden="true"></canvas>
+    </button>
+    <div class="arcade-controls arcade-breakout-controls" aria-label="Breakout mouse controls">
+      <button class="arcade-key" id="breakoutLeft" type="button" aria-label="Move Breakout paddle left">◀</button>
+      <span class="arcade-coin">START</span>
+      <button class="arcade-key" id="breakoutRight" type="button" aria-label="Move Breakout paddle right">▶</button>
+    </div>
+    <p class="arcade-help">CLICK TO START · MOVE MOUSE<br>OVER SCREEN · OR A/D</p>
+  </aside>
 
-<div class="wrapper">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="Back to top">AMIRALI</a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#about">About</a>
+        <a href="#teaching">Teaching</a>
+        <a href="#professional">Professional</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-<section>
-  <div class="quote-box">
-    You might not think that programmers are artists, but programming is an extremely creative profession. It’s logic-based creativity.
-    <div class="quote-author">– John Romero</div>
+  <div class="page" id="top">
+    <header class="hero">
+      <p class="hero-kicker">Game Developer / Graphics Enthusiast</p>
+      <h1>Amirali<br>Ahangari</h1>
+      <p class="hero-role">Gameplay systems · real-time graphics · simulation</p>
+      <p class="hero-intro">
+        I build games and interactive systems with Unreal Engine, Unity, C++, and graphics APIs — with a focus on how things feel, render, and behave under the hood.
+      </p>
+      <div class="hero-actions">
+        <a href="#projects">Selected work ↓</a>
+        <a href="https://lordipio.github.io/CV.pdf" target="_blank" rel="noopener noreferrer">Resume ↗</a>
+      </div>
+
+      <blockquote class="hero-quote">
+        <p>“You might not think that programmers are artists, but programming is an extremely creative profession. It’s logic-based creativity.”</p>
+        <cite>— John Romero</cite>
+      </blockquote>
+    </header>
+
+    <main id="content">
+      <section class="section" id="about" aria-labelledby="about-title">
+        <h2 class="section-title" id="about-title">About Me</h2>
+        <div class="section-body">
+          <div class="about-story">
+            <div class="about-copy">
+              <p class="lead-copy">
+                I fell in love with video games as a kid and, honestly, never really grew out of it. GTA: Vice City eventually made me curious about what was happening behind the screen—rendering, shaders, engine systems, and all the invisible things that somehow make a world feel real.
+              </p>
+              <p class="lead-copy">
+                I studied Industrial Engineering, but my path gradually drifted toward computer science and game development through teaching, studio work, and probably many side projects. Since then, I’ve worked with Unreal Engine, Unity, C++, and OpenGL, exploring both the technical and artistic sides of games. That mix is what I love most: building something complex under the hood, then turning it into something players can actually see, feel, and hopefully remember.
+              </p>
+            </div>
+
+            <button class="about-visual" id="aboutController" type="button" aria-label="Press start for a small easter egg">
+              <svg class="controller-svg" viewBox="0 0 240 120" aria-hidden="true" focusable="false">
+                <path class="controller-cable" d="M120 20 C120 10 109 10 109 0" />
+                <rect class="controller-shell" x="14" y="20" width="212" height="82" rx="12" />
+                <rect class="controller-panel" x="25" y="31" width="190" height="60" rx="7" />
+
+                <g class="controller-dpad">
+                  <path d="M54 40 H69 V54 H83 V69 H69 V83 H54 V69 H40 V54 H54 Z" />
+                </g>
+
+                <rect class="controller-detail" x="101" y="62" width="14" height="6" rx="3" />
+                <rect class="controller-detail" x="126" y="62" width="14" height="6" rx="3" />
+                <text class="controller-label" x="108" y="81">SELECT</text>
+                <text class="controller-label" x="133" y="81">START</text>
+
+                <circle class="controller-button" cx="175" cy="62" r="11" />
+                <circle class="controller-button controller-button-a" cx="201" cy="62" r="11" />
+                <text class="controller-face-label" x="175" y="62">B</text>
+                <text class="controller-face-label controller-face-label-a" x="201" y="62">A</text>
+
+                <path class="controller-detail controller-seam" d="M28 94 H212" />
+              </svg>
+              <span class="about-press-start" id="aboutControllerStatus" aria-live="polite">PRESS START_</span>
+              <span class="about-controller-xp" aria-hidden="true">+100 XP</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="resume" aria-labelledby="resume-title">
+        <h2 class="section-title" id="resume-title">Resume</h2>
+        <div class="section-body">
+          <div class="resume-row">
+            <p>The concise version of my education, experience, and technical work.</p>
+            <a href="https://lordipio.github.io/CV.pdf" target="_blank" rel="noopener noreferrer">Download PDF ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="education" aria-labelledby="education-title">
+        <h2 class="section-title" id="education-title">Education</h2>
+        <div class="section-body">
+          <div class="entries">
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Bachelor of Industrial Engineering</h3>
+                <span class="date">Sept 2020 — Aug 2025</span>
+              </div>
+              <p class="entry-subtitle">Amirkabir University of Technology (Tehran Polytechnic)</p>
+              <p>GPA: 3.46 / 4.00 <span aria-hidden="true">·</span> 16.46 / 20</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="research-interests" aria-labelledby="research-interests-title">
+        <h2 class="section-title" id="research-interests-title">Research Interests</h2>
+        <div class="section-body">
+          <p class="interest-line">
+            Computer Graphics <span>·</span> HCI <span>·</span> Game Programming <span>·</span> Engine Programming <span>·</span> Software Engineering
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="research-experience" aria-labelledby="research-experience-title">
+        <h2 class="section-title" id="research-experience-title">Research Experience</h2>
+        <div class="section-body">
+          <div class="entries">
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Educational Game Application for Children with Autism Spectrum Disorder</h3>
+                <span class="date">B.Sc. Thesis</span>
+              </div>
+              <p>
+                Developed AutiPlay, a Unity educational game supporting cognitive and sensory development through three focused stages: Matching, Sorting, and Pattern Recognition, with calm visuals and gentle sound design.
+              </p>
+              <a class="entry-link" href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener noreferrer">View AutiPlay on GitHub ↗</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="publications" aria-labelledby="publications-title">
+        <h2 class="section-title" id="publications-title">Publications</h2>
+        <div class="section-body">
+          <div class="entries">
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Solution Approaches in Disaster Management</h3>
+                <span class="state">In progress</span>
+              </div>
+              <p>
+                Literature review of optimization models and algorithms for disaster management, with emphasis on logistical challenges and solution approaches during disaster response.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="teaching" aria-labelledby="teaching-title">
+        <h2 class="section-title" id="teaching-title">Teaching Experience</h2>
+        <div class="section-body">
+          <div class="entries">
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Udemy Build Complete Game Menus in Unreal Engine 5 Blueprints</h3>
+                <span class="date">Published 2026</span>
+              </div>
+              <p class="entry-subtitle">Co-Instructor · Unreal Engine 5 · Blueprints · UMG</p>
+              <p>
+                Practical course on building a complete game-menu system in Unreal Engine 5, including animated navigation, settings, key remapping, audio/display controls, and persistent data through Unreal's Save System.
+              </p>
+              <a class="entry-link" href="https://www.udemy.com/course/build-complete-game-menus-in-unreal-engine-5-blueprints/?couponCode=26BBPAA2MX" target="_blank" rel="noopener noreferrer">View the Udemy course ↗</a>
+            </article>
+
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Teaching Assistant — Algorithm Design</h3>
+                <span class="date">2023 — 2024</span>
+              </div>
+              <p>Taught object-oriented programming, Dijkstra and A* algorithms, and assisted with optimization and algorithm-design techniques.</p>
+            </article>
+
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Teaching Assistant — Gamification</h3>
+                <span class="date">2024 — 2025</span>
+              </div>
+              <p>Led discussions on gamification principles and helped students design and develop gamified projects.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="professional" aria-labelledby="professional-title">
+        <h2 class="section-title" id="professional-title">Professional Experience</h2>
+        <div class="section-body">
+          <div class="entries">
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Game Developer · <a href="https://drivingsimulator.ir/en" target="_blank" rel="noopener noreferrer">Nasir Driving Simulator</a></h3>
+                <span class="date">Sept 2023 — July 2026</span>
+              </div>
+              <ul>
+                <li>Developed physics-based soil and excavator interaction systems.</li>
+                <li>Applied SOLID and Singleton patterns and built vehicle-gauge UI systems.</li>
+                <li>Worked across shaders, gameplay features, optimization, and Git-based development.</li>
+              </ul>
+            </article>
+
+            <article class="entry">
+              <div class="entry-head">
+                <h3>Unity Developer · <a href="https://deadmage.com/" target="_blank" rel="noopener noreferrer">Dead Mage</a></h3>
+                <span class="date">Jan — Feb 2025</span>
+              </div>
+              <ul>
+                <li>Built a prototype for a tile-based digging game using Unity Tilemaps and Grid.</li>
+                <li>Developed gameplay features and worked on rendering and performance optimization.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="projects" aria-labelledby="projects-title">
+        <h2 class="section-title" id="projects-title">Projects</h2>
+        <div class="section-body">
+          <div class="projects">
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/3D_Renderer" target="_blank" rel="noopener noreferrer" aria-label="3D Software Renderer on GitHub">
+                <img src="https://lordipio.github.io/462900750-b544a6a1-dc71-436a-aa4a-7fda469aee42.gif" width="640" height="360" loading="lazy" alt="3D Software Renderer demo">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>3D Software Renderer</h3>
+                  <span class="project-tech">C / SDL2</span>
+                </div>
+                <p>A renderer built from scratch with perspective projection, rasterization, and camera control.</p>
+                <a class="text-link" href="https://github.com/lordipio/3D_Renderer" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/ThirdPersonAdventureGame-UE5" target="_blank" rel="noopener noreferrer" aria-label="Third Person Adventure on GitHub">
+                <img src="https://lordipio.github.io/271684345-03c574a3-ed47-43b5-87b3-1965d556964a.png" width="640" height="360" loading="lazy" alt="Third Person Adventure gameplay">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>Third Person Adventure</h3>
+                  <span class="project-tech">UE5 / C++</span>
+                </div>
+                <p>Animation, AI behavior, gameplay systems, and visual effects built with C++ and Blueprints.</p>
+                <a class="text-link" href="https://github.com/lordipio/ThirdPersonAdventureGame-UE5" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/Fabric_Simulation" target="_blank" rel="noopener noreferrer" aria-label="Fabric Simulation on GitHub">
+                <video muted autoplay loop playsinline preload="metadata" aria-label="Fabric Simulation demo">
+                  <source src="https://lordipio.github.io/Fabric_Simulation.mp4" type="video/mp4">
+                </video>
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>Fabric Simulation</h3>
+                  <span class="project-tech">C++ / OpenGL</span>
+                </div>
+                <p>Real-time cloth simulation using mass-spring physics, Verlet integration, and interactive rendering.</p>
+                <a class="text-link" href="https://github.com/lordipio/Fabric_Simulation" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/2D-Physics-Engine" target="_blank" rel="noopener noreferrer" aria-label="2D Physics Engine on GitHub">
+                <video muted autoplay loop playsinline preload="metadata" aria-label="2D Physics Engine demo">
+                  <source src="https://lordipio.github.io/Physics_Engine.mp4" type="video/mp4">
+                </video>
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>2D Physics Engine</h3>
+                  <span class="project-tech">C++</span>
+                </div>
+                <p>Rigid bodies, collision detection, constraints, forces, and semi-implicit Euler integration.</p>
+                <a class="text-link" href="https://github.com/lordipio/2D-Physics-Engine" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/SpaceBastard_OpenGLProject" target="_blank" rel="noopener noreferrer" aria-label="Galaga Clone on GitHub">
+                <img src="https://lordipio.github.io/386815358-73ca9c59-cacb-477e-b3ce-c22dc5bf6be3.gif" width="640" height="360" loading="lazy" alt="Galaga Clone gameplay">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>Galaga Clone</h3>
+                  <span class="project-tech">OpenGL</span>
+                </div>
+                <p>2D gameplay and rendering built with VAOs, VBOs, shaders, and matrix transformations.</p>
+                <a class="text-link" href="https://github.com/lordipio/SpaceBastard_OpenGLProject" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/EndlessRunnerGame-Unity" target="_blank" rel="noopener noreferrer" aria-label="Endless Runner Game on GitHub">
+                <img src="https://lordipio.github.io/271713857-881bb41e-6e73-4646-b337-4319e894cbb6.png" width="640" height="360" loading="lazy" alt="Endless Runner gameplay">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>Endless Runner Game</h3>
+                  <span class="project-tech">Unity / C#</span>
+                </div>
+                <p>Procedural level generation, object pooling, and a mobile-friendly gameplay/UI loop.</p>
+                <a class="text-link" href="https://github.com/lordipio/EndlessRunnerGame-Unity" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <div class="project-media">
+                <video muted autoplay loop playsinline preload="metadata" aria-label="VR Table Tennis demo">
+                  <source src="https://lordipio.github.io/TableTennis.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>VR Table Tennis</h3>
+                  <span class="project-tech">UE5 / VR</span>
+                </div>
+                <p>A VR table-tennis experience focused on responsive motion controls and believable physics.</p>
+              </div>
+            </article>
+
+            <article class="project">
+              <div class="project-media">
+                <video muted autoplay loop playsinline preload="metadata" aria-label="3D Ink VR demo">
+                  <source src="https://lordipio.github.io/3D_INK.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>3D Ink VR</h3>
+                  <span class="project-tech">UE5 / VR</span>
+                </div>
+                <p>Interactive drawing in VR using voxel-based dynamic mesh creation.</p>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener noreferrer" aria-label="AutiPlay on GitHub">
+                <img src="https://lordipio.github.io/444799692-885f65a6-895f-42a8-8155-0b8921833749.png" width="640" height="360" loading="lazy" alt="AutiPlay educational game">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>AutiPlay</h3>
+                  <span class="project-tech">Unity / C#</span>
+                </div>
+                <p>Persian educational game for children with ASD, built around focused cognitive mini-games.</p>
+                <a class="text-link" href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/ShooterGame-UE4" target="_blank" rel="noopener noreferrer" aria-label="Third Person Shooter on GitHub">
+                <img src="https://lordipio.github.io/271723677-a55f0c9c-f408-462e-afb9-5244fde62284.png" width="640" height="360" loading="lazy" alt="Third Person Shooter gameplay">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>Third Person Shooter</h3>
+                  <span class="project-tech">UE4 / C++</span>
+                </div>
+                <p>Combat systems and gameplay logic built through C++ and Blueprint integration.</p>
+                <a class="text-link" href="https://github.com/lordipio/ShooterGame-UE4" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/emilkd/gmtk2025" target="_blank" rel="noopener noreferrer" aria-label="GMTK Game Jam project on GitHub">
+                <img src="https://lordipio.github.io/GMTK.jpg" width="640" height="360" loading="lazy" alt="GMTK Game Jam project">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>GMTK Game Jam</h3>
+                  <span class="project-tech">UE5 / C++</span>
+                </div>
+                <p>A collaborative game-jam project built with Unreal Engine 5, Blueprints, and C++.</p>
+                <a class="text-link" href="https://github.com/emilkd/gmtk2025" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/PremierePro-Shuffle-Clips-Extension" target="_blank" rel="noopener noreferrer" aria-label="Premiere Pro Clip Shuffler on GitHub">
+                <img src="https://lordipio.github.io/351550207-85a35a50-e066-41d3-8b68-157741fff699.png" width="640" height="360" loading="lazy" alt="Premiere Pro Clip Shuffler extension">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>Premiere Pro Clip Shuffler</h3>
+                  <span class="project-tech">JS / CEP</span>
+                </div>
+                <p>A Premiere Pro extension for randomly shuffling clips in a timeline using CEP/JSX.</p>
+                <a class="text-link" href="https://github.com/lordipio/PremierePro-Shuffle-Clips-Extension" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+
+            <article class="project">
+              <a class="project-media" href="https://github.com/lordipio/EnglishStylizerForGoogleDoc" target="_blank" rel="noopener noreferrer" aria-label="English Stylizer for Google Docs on GitHub">
+                <img src="https://lordipio.github.io/351802710-4a1a7b6e-eea3-4cb6-abb4-dfc0e9af5ffd.png" width="640" height="360" loading="lazy" alt="English Stylizer for Google Docs">
+              </a>
+              <div class="project-info">
+                <div class="project-heading">
+                  <h3>English Stylizer for Google Docs</h3>
+                  <span class="project-tech">Apps Script</span>
+                </div>
+                <p>A Google Docs add-on that helps format and stylize English text inside documents.</p>
+                <a class="text-link" href="https://github.com/lordipio/EnglishStylizerForGoogleDoc" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="skills" aria-labelledby="skills-title">
+        <h2 class="section-title" id="skills-title">Skills</h2>
+        <div class="section-body">
+          <dl class="skill-list">
+            <div class="skill-row">
+              <dt>Programming</dt>
+              <dd>C++, C#, C, Java, JavaScript, Python, SQL, Blueprint scripting</dd>
+            </div>
+            <div class="skill-row">
+              <dt>Game Engines</dt>
+              <dd>Unreal Engine 4/5, Unity</dd>
+            </div>
+            <div class="skill-row">
+              <dt>Graphics</dt>
+              <dd>OpenGL, GLSL, shader programming, SDL2, real-time rendering</dd>
+            </div>
+            <div class="skill-row">
+              <dt>Systems</dt>
+              <dd>Game AI, simulation, physics, gameplay architecture, object-oriented design</dd>
+            </div>
+            <div class="skill-row">
+              <dt>Tools</dt>
+              <dd>Git, Azure, Visual Studio, Visual Studio Code</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="section" id="languages" aria-labelledby="languages-title">
+        <h2 class="section-title" id="languages-title">Language Proficiency</h2>
+        <div class="section-body">
+          <div class="language-grid">
+            <div class="language">
+              <h3>English</h3>
+              <p>IELTS Academic — Overall 7.0</p>
+              <p class="scores">Listening 7.0 · Reading 7.0 · Speaking 6.5 · Writing 6.5</p>
+            </div>
+            <div class="language">
+              <h3>Persian (Farsi)</h3>
+              <p>Native</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="activities" aria-labelledby="activities-title">
+        <h2 class="section-title" id="activities-title">Activities &amp; Hobbies</h2>
+        <div class="section-body">
+          <ul class="plain-list">
+            <li>Film reviews and movie analysis on <a href="https://www.youtube.com/@lordipio" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
+            <li>Storytelling through cinema and video games.</li>
+            <li>Former lead of the Amirkabir University Cinema Community.</li>
+            <li>Guitar and music composition.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <h2 class="section-title" id="contact-title">Contact</h2>
+        <div class="section-body">
+          <ul class="contact-list">
+            <li>
+              <span class="contact-label">Email</span>
+              <a href="mailto:Amirali.Ahangari.Academic@gmail.com">Amirali.Ahangari.Academic@gmail.com</a>
+            </li>
+            <li>
+              <span class="contact-label">GitHub</span>
+              <a href="https://github.com/lordipio" target="_blank" rel="noopener noreferrer">github.com/lordipio</a>
+            </li>
+            <li>
+              <span class="contact-label">LinkedIn</span>
+              <a href="https://linkedin.com/in/amir-ali-ahangari-208315213" target="_blank" rel="noopener noreferrer">amir-ali-ahangari</a>
+            </li>
+            <li>
+              <span class="contact-label">Demos</span>
+              <a href="https://www.youtube.com/@AmirAli-bh7fi/videos" target="_blank" rel="noopener noreferrer">YouTube project demos</a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
   </div>
-</section>
 
-  <br>
-  <br>
+  <footer class="footer">Amirali Ahangari · Game Developer · 2026</footer>
 
-<section class="section-box">
-<h2 class="matrix-title" data-text="About Me"></h2>
-  <p><span class="white-inter">
-    I’m someone who fell in love with video games as a kid and never really grew out of it.  
-    What started with games like GTA: Vice City turned into a real curiosity about how games actually work, especially the low-level stuff like rendering, shaders, and engine systems.  
-    Even though I’m studying Industrial Engineering, I’ve gradually shifted my focus toward computer science by working as a TA in algorithm design and gamification, and by getting hands-on with internships and projects in game studios.  
-    I’ve built several projects using Unreal Engine, Unity, and OpenGL, diving into gameplay systems, optimization, and core system development, while also getting more and more into the artistic side of game design, like world-building and visual storytelling.  
-    I love the idea of mixing code and creativity, and I'm always looking for ways to turn that mix into something players can truly feel and connect with.
-  </p></span></li>
-  </ul>
-</section>
+  <script>
+    (() => {
+      const canvas = document.getElementById("matrixCanvas");
+      const ctx = canvas.getContext("2d", { alpha: false });
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const characters = "アァイィウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-<section class="section-box">
-<h2 class="matrix-title" data-text="Resume"></h2>
-  <ul>
-    <li><a href="https://lordipio.github.io/CV.pdf" target="_blank">Download Resume (PDF)</a></li>
-  </ul>
-</section>
+      let width = 0;
+      let height = 0;
+      let fontSize = 18;
+      let drops = [];
+      let frameId = 0;
+      let lastFrame = 0;
+      let resizeId = 0;
 
-<section class="section-box">
-<h2 class="matrix-title" data-text="Education"></h2>
-  <ul>
-    <li><strong>Bachelor of Industrial Engineering</strong>, Amirkabir University of Technology (Tehran Polytechnic)<br>
-    <span class="white-inter">Sept 2020 – Aug 2025 | GPA: 3.46/4.00 (Converted from 16.46/20)</span></li>
-  </ul>
-</section>
+      function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        fontSize = width < 700 ? 16 : 18;
 
-<section class="section-box">
-<h2 class="matrix-title" data-text="Research Interests"></h2>
-  <p class="white-inter">Computer Graphics, HCI, Game Programming, Engine Programming, Software Engineering</p>
-</section>
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-<!-- <section class="section-box">
-<h2 class="matrix-title" data-text="Research Experience"></h2>
-  <ul>
-    <li><strong>Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder</strong><br>
-      <span class="white-inter">Designed and developed a Unity-based educational game for enhancing cognitive, sensory, and social skills in children with ASD.</span>
-    </li>
-  </ul>
-</section> -->
-
-<!-- <section class="section-box">
-  <h2 class="matrix-title" data-text="Research Experience"></h2>
-  <ul>
-    <li>
-      <strong>
-        Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder — 
-        <a href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener">View on GitHub</a>
-      </strong>
-      <br>
-      <span class="white-inter">
-        Developed an educational Unity-based game to support cognitive and sensory development in children with Autism Spectrum Disorder. Features three interactive stages—Matching, Sorting, and Pattern recognition—designed to enhance focus, classification, and logical thinking through calm visuals and gentle sound design.
-      </span>
-    </li>
-  </ul>
-</section> -->
-
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Research Experience"></h2>
-  <ul>
-    <li>
-      <strong>
-        Thesis: Development of an Educational Game Application for Children with Autism Spectrum Disorder
-      </strong><br>
-      <strong>
-        <a href="https://github.com/lordipio/AutiPlay" target="_blank" rel="noopener">
-          View on GitHub
-        </a>
-      </strong><br>
-      <span class="white-inter">
-        Developed an educational Unity-based game to support cognitive and sensory development in children with Autism Spectrum Disorder. Features three interactive stages—Matching, Sorting, and Pattern recognition—designed to enhance focus, classification, and logical thinking through calm visuals and gentle sound design.
-      </span>
-    </li>
-  </ul>
-</section>
-
-
-<section class="section-box">
-<h2 class="matrix-title" data-text="Publications"></h2>
-  <ul>
-    <li><strong>Solution Approaches in Disaster Management</strong>
-    <span class="badge badge-progress">In progress</span><br>
-      <span class="white-inter">
-        • Conducted a comprehensive literature review on optimization models and algorithms in disaster management.<br>
-        • Analyzed existing solution approaches for logistical challenges during disaster response.
-      </span>
-    </li>
-  </ul>
-</section>
-
-<section class="section-box">
-<h2 class="matrix-title" data-text="Teaching Experience"></h2>
-  <ul>
-    <li><strong>Teaching Assistant, Algorithm Design</strong> (2023–2024)<br>
-      <span class="white-inter">Taught OOP, Dijkstra, A* algorithms; assisted in optimization and design techniques.</span>
-    </li>
-      <br>
-    <li><strong>Teaching Assistant, Gamification</strong> (2024–2025)<br>
-      <span class="white-inter">Led discussions on gamification principles; helped design gamified projects.</span>
-    </li>
-      <br>
-    <li>
-    <strong>Co-Instructor, Udemy Course – “Main Menu UI in Unreal Engine 5”</strong>
-    <span class="badge badge-progress">In progress</span>
-    <br>
-    <span class="white-inter">
-      Co-instructing a practical course on building a modern Main Menu system in Unreal Engine using UMG widgets. Students learn to create animated navigation, Credits, and Settings pages (Graphics, Display, Audio, Key Remapping) with persistent data handled through Unreal’s Save System.
-      Developed in collaboration with 
-      <a href="https://www.udemy.com/user/alireza-emami-9/" target="_blank" rel="noopener">Alireza Emami</a>.
-    </span>
-    <br>
-  </li>
-  </ul>
-
-</section>
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Professional Experience"></h2>
-  <ul>
-    <li>
-      <strong>Game Developer, <a href="https://drivingsimulator.ir/en" target="_blank">Nasir Driving Simulator</a></strong> (Sept 2023 – Present)<br>
-      <span class="white-inter">
-        • Developed physics-based interaction system for soil/excavator.<br>
-        • Applied SOLID and Singleton patterns; UI for vehicle gauges.<br>
-        • Shader programming and version control via Git.
-      </span>
-    </li>
-      <br>
-
-    <li>
-      
-      <strong>Unity Developer, <a href="https://deadmage.com/" target="_blank">Dead Mage</a></strong> (Jan – Feb 2025)<br>
-      <span class="white-inter">
-        • Built prototype for tile-based digging game using Unity Tile Maps and Grid.<br>
-        • Designed gameplay features; optimized rendering and performance.
-      </span>
-    </li>
-  </ul>
-</section>
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Projects"></h2>
-  <div class="projects-grid">
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/462900750-b544a6a1-dc71-436a-aa4a-7fda469aee42.gif" width="640" height="360" alt="3D Renderer" class="project-image">
-      <div class="project-content">
-        <div class="project-title">3D Software Renderer (C)</div>
-        <div class="project-description">
-          A custom 3D renderer built from scratch using SDL2 and C, handling perspective projection, rasterization, and camera control.
-          <br><a href="https://github.com/lordipio/3D_Renderer" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-  <div class="project-card">
-      <img src="https://lordipio.github.io/271684345-03c574a3-ed47-43b5-87b3-1965d556964a.png" width="640" height="360" alt="UE5 Adventure" class="project-image">
-      <div class="project-content">
-        <div class="project-title">Third Person Adventure (UE5)</div>
-        <div class="project-description">
-          Advanced animation, AI behavior, and visual effects built with C++ and Blueprints.
-          <br><a href="https://github.com/lordipio/ThirdPersonAdventureGame-UE5" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-        <video
-          class="project-image"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source src="https://lordipio.github.io/Fabric_Simulation.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      
-        <div class="project-content">
-          <div class="project-title">Fabric Simulation (C++ & OpenGL)</div>
-          <div class="project-description">
-            A real-time cloth simulation in C++ and OpenGL, showcasing mass–spring physics, Verlet integration, and interactive real-time rendering.
-            <br><a href="https://github.com/lordipio/Fabric_Simulation" target="_blank">View on GitHub →</a>
-          </div>
-        </div>
-      </div>
-
-  <div class="project-card">
-    <video
-    class="project-image"
-    autoplay
-    loop
-    muted
-    playsinline
-  >
-    <source src="https://lordipio.github.io/Physics_Engine.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-      <div class="project-content">
-        <div class="project-title">2D Physics Engine (C++)</div>
-        <div class="project-description">
-          Implemented a 2D physics engine in C++ with rigid bodies, collision detection, constraints, forces, and semi-implicit Euler integration.
-          <br><a href="https://github.com/lordipio/2D-Physics-Engine" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/386815358-73ca9c59-cacb-477e-b3ce-c22dc5bf6be3.gif" width="640" height="360" alt="Galaga Clone" class="project-image">
-      <div class="project-content">
-        <div class="project-title">Galaga Clone (OpenGL)</div>
-        <div class="project-description">
-          2D gameplay using VAOs/VBOs and matrix transformations in OpenGL.
-          <br><a href="https://github.com/lordipio/SpaceBastard_OpenGLProject" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/271713857-881bb41e-6e73-4646-b337-4319e894cbb6.png" width="640" height="360" alt="Endless Runner" class="project-image">
-      <div class="project-content">
-        <div class="project-title">Endless Runner Game (Unity)</div>
-        <div class="project-description">
-          Procedural level generation, object pooling, and mobile-friendly UI.
-          <br><a href="https://github.com/lordipio/EndlessRunnerGame-Unity" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-        <video
-          class="project-image"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source src="https://lordipio.github.io/TableTennis.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      
-        <div class="project-content">
-          <div class="project-title">VR Table Tennis (UE5)</div>
-          <div class="project-description">
-            VR table tennis game built in Unreal Engine 5 with realistic physics and motion controls.
-          </div>
-        </div>
-      </div>
-
-
-    <div class="project-card">
-        <video
-          class="project-image"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source src="https://lordipio.github.io/3D_INK.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      
-        <div class="project-content">
-          <div class="project-title">3D Ink VR (UE5)</div>
-          <div class="project-description">
-            VR experience in UE5 using a voxel plugin with dynamic mesh creation and interactive drawing.
-          </div>
-        </div>
-    </div>
-
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/444799692-885f65a6-895f-42a8-8155-0b8921833749.png" width="640" height="360" alt="AutiPlay" class="project-image">
-      <div class="project-content">
-        <div class="project-title">AutiPlay (Unity)</div>
-        <div class="project-description">
-          A persian educational game for children with ASD, designed with cognitive mini-games and joyful visuals.
-          <br><a href="https://github.com/lordipio/AutiPlay" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/271723677-a55f0c9c-f408-462e-afb9-5244fde62284.png" width="640" height="360" alt="Shooter UE4" class="project-image">
-      <div class="project-content">
-        <div class="project-title">Third Person Shooter (UE4)</div>
-        <div class="project-description">
-          Core gameplay logic and C++-Blueprint integration for combat systems.
-          <br><a href="https://github.com/lordipio/ShooterGame-UE4" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/GMTK.jpg" width="640" height="360" alt="Game Jam Project" class="project-image">
-      <div class="project-content">
-        <div class="project-title">Game Jam Project (UE5)</div>
-        <div class="project-description">
-          Using UE5 blueprints and C++.
-          <br><a href="https://github.com/emilkd/gmtk2025" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <img src="https://lordipio.github.io/351550207-85a35a50-e066-41d3-8b68-157741fff699.png" width="640" height="360" alt="Premiere Extension" class="project-image">
-      <div class="project-content">
-        <div class="project-title">Premiere Pro Clip Shuffler</div>
-        <div class="project-description">
-          A custom extension for Adobe Premiere Pro to randomly shuffle clips in the timeline using CEP/JSX.
-          <br><a href="https://github.com/lordipio/PremierePro-Shuffle-Clips-Extension" target="_blank">View on GitHub →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card">
-    <img src="https://lordipio.github.io/351802710-4a1a7b6e-eea3-4cb6-abb4-dfc0e9af5ffd.png" width="640" height="360" alt="Google Docs Extension" class="project-image">
-    <div class="project-content">
-        <div class="project-title">English Stylizer for Google Docs</div>
-        <div class="project-description">
-        A Google Docs add-on that helps stylize English text.
-        <br><a href="https://github.com/lordipio/EnglishStylizerForGoogleDoc" target="_blank">View on GitHub →</a>
-        </div>
-    </div>
-    </div>
-
-
-  </div>
-</section>
-
-</section>
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Skills"></h2>
-  <ul>
-    <li>Languages: <span class="white-inter">C++, C#, C, Java, JS, Python, SQL, Blueprint Scripting</span></li>
-    <li>Game Engines: <span class="white-inter">Unreal Engine 4/5, Unity</span></li>
-    <li>Graphics: <span class="white-inter">OpenGL, Shader Programming, SDL, GLSL</span></li>
-    <li>Concepts: <span class="white-inter">Game AI, Simulation, Object-Oriented Design, computer graphics </span></li>
-    <li>Tools: <span class="white-inter">Git, Azure, Visual Studio, visual studio code</span></li>
-  </ul>
-</section>
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Language Proficiency"></h2>
-  <ul>
-    <li>
-      <strong>English</strong> <span class="white-inter">– IELTS Academic Overall <strong>7.0</strong><br></span>
-      <span class="white-inter" style="display: inline-block; margin-top: 6px;">
-        <span style="background:#001900; border:1px solid #006600; border-radius:6px; padding:2px 8px; margin-right:6px;">Listening 7.0</span>
-        <span style="background:#001900; border:1px solid #006600; border-radius:6px; padding:2px 8px; margin-right:6px;">Reading 7.0</span>
-        <span style="background:#001900; border:1px solid #006600; border-radius:6px; padding:2px 8px; margin-right:6px;">Speaking 6.5</span>
-        <span style="background:#001900; border:1px solid #006600; border-radius:6px; padding:2px 8px;">Writing 6.5</span>
-      </span>
-    </li>
-    <br>
-    <li>
-      <strong>Persian (Farsi)</strong><span class="white-inter"> – Native</span>
-    </li>
-  </ul>
-</section>
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Activities & Hobbies"></h2>
-  <ul class="white-inter">
-      <li>Runs a       <a href="https://www.youtube.com/@lordipio" target="_blank" rel="noopener" class="youtube-link">
-          YouTube channel
-        </a>  on film reviews and movie analysis.</li>
-    <li>Passionate about storytelling through cinema and video games.</li>
-    <li>Led the Amirkabir University Cinema Community.</li>
-    <li>Enjoys playing guitar and composing music.</li>
-  </ul>
-</section>
-
-
-<section class="section-box">
-  <h2 class="matrix-title" data-text="Contact"></h2>
-  <ul>
-    <li>Email: <span class="green-inter"><a href="mailto:Amirali.Ahangari.Academic@gmail.com">Amirali.Ahangari.Academic@gmail.com</a></span></li>
-    <li>GitHub: <span class="green-inter"><a href="https://github.com/lordipio" target="_blank">github.com/lordipio</a></span></li>
-    <li>LinkedIn: <span class="green-inter"><a href="https://linkedin.com/in/amir-ali-ahangari-208315213" target="_blank">linkedin.com/in/amir-ali-ahangari</a></span></li>
-    <li>Project Demos: <span class="green-inter"><a href="https://www.youtube.com/@AmirAli-bh7fi/videos" target="_blank">@me on YouTube</a></span></li>
-  </ul>
-</section>
-
-</div>
-<footer class="section-box">
-  Made with ❤️ by Amirali Ahangari | Hosted on GitHub Pages
-</footer>
-
-<!-- Matrix effect -->
-<script>
-  const canvas = document.getElementById("matrixCanvas");
-  const ctx = canvas.getContext("2d");
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const chars = "アァイィウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const fontSize = 16;
-  const columns = canvas.width / fontSize;
-  const drops = Array.from({ length: columns }).fill(1);
-
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#0F0";
-    ctx.font = `${fontSize}px monospace`;
-
-    for (let i = 0; i < drops.length; i++) {
-      const text = chars.charAt(Math.floor(Math.random() * chars.length));
-      const x = i * fontSize;
-      const y = drops[i] * fontSize;
-
-      ctx.fillText(text, x, y);
-
-      if (y > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
+        const columns = Math.ceil(width / fontSize);
+        drops = Array.from({ length: columns }, () => -Math.floor(Math.random() * Math.max(8, height / fontSize)));
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, width, height);
       }
 
-      drops[i]++;
-    }
-  }
+      function drawFrame() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.085)";
+        ctx.fillRect(0, 0, width, height);
+        ctx.font = `${fontSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--mono")}`;
+        ctx.textBaseline = "top";
 
-  setInterval(drawMatrix, 33);
+        for (let i = 0; i < drops.length; i += 1) {
+          const char = characters[Math.floor(Math.random() * characters.length)];
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
 
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-</script>
+          ctx.fillStyle = Math.random() > 0.965 ? "#baffca" : "#00e83f";
+          ctx.fillText(char, x, y);
 
-<script>
-  const scrambleLetters = "アァイィウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const matrixTitles = document.querySelectorAll('.matrix-title');
-
-  matrixTitles.forEach(title => {
-    const originalText = title.getAttribute('data-text');
-    let displayText = "";
-    let iteration = 0;
-
-    const interval = setInterval(() => {
-      displayText = originalText
-        .split('')
-        .map((char, i) => {
-          if (i < Math.floor(iteration)) return char;
-          if (char === ' ') return ' ';
-          return scrambleLetters[Math.floor(Math.random() * scrambleLetters.length)];
-        })
-        .join('');
-
-      title.textContent = displayText;
-
-      iteration += 0.3;
-
-      if (iteration >= originalText.length) {
-        title.textContent = originalText;
-        clearInterval(interval);
+          if (y > height && Math.random() > 0.982) {
+            drops[i] = -Math.floor(Math.random() * 12);
+          } else {
+            drops[i] += 1;
+          }
+        }
       }
-    }, 55);
-  });
-</script>
 
+      function animate(now) {
+        if (now - lastFrame >= 42) {
+          drawFrame();
+          lastFrame = now;
+        }
+        frameId = requestAnimationFrame(animate);
+      }
+
+      function renderMode() {
+        cancelAnimationFrame(frameId);
+        resizeCanvas();
+
+        if (reducedMotion.matches) {
+          for (let i = 0; i < 5; i += 1) drawFrame();
+          return;
+        }
+
+        frameId = requestAnimationFrame(animate);
+      }
+
+      resizeCanvas();
+      renderMode();
+
+      window.addEventListener("resize", () => {
+        cancelAnimationFrame(resizeId);
+        resizeId = requestAnimationFrame(renderMode);
+      });
+
+      if (typeof reducedMotion.addEventListener === "function") {
+        reducedMotion.addEventListener("change", renderMode);
+      }
+
+      if (reducedMotion.matches) {
+        document.querySelectorAll("video[autoplay]").forEach((video) => video.pause());
+      }
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const controller = document.getElementById("aboutController");
+      const status = document.getElementById("aboutControllerStatus");
+      if (!controller || !status) return;
+
+      let resetTimer = 0;
+
+      controller.addEventListener("click", () => {
+        window.clearTimeout(resetTimer);
+
+        controller.classList.remove("is-active");
+        document.body.classList.remove("controller-active");
+        void controller.offsetWidth;
+
+        controller.classList.add("is-active");
+        document.body.classList.add("controller-active");
+        status.textContent = "ACHIEVEMENT: STILL PLAYING";
+
+        resetTimer = window.setTimeout(() => {
+          controller.classList.remove("is-active");
+          document.body.classList.remove("controller-active");
+          status.textContent = "PRESS START_";
+        }, 2100);
+      });
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const aboutCopy = document.querySelector(".about-copy");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if (aboutCopy) {
+        if ("IntersectionObserver" in window && !reducedMotion.matches) {
+          const observer = new IntersectionObserver((entries) => {
+            if (!entries[0].isIntersecting) return;
+            aboutCopy.classList.add("is-visible");
+            observer.disconnect();
+          }, { threshold: 0.28 });
+          observer.observe(aboutCopy);
+        } else {
+          aboutCopy.classList.add("is-visible");
+        }
+      }
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if ("IntersectionObserver" in window && !reducedMotion.matches) {
+        const revealItems = document.querySelectorAll(
+          ".entry, .resume-row, .interest-line, .skill-row, .language, .plain-list li, .contact-list li"
+        );
+
+        document.documentElement.classList.add("fx-ready");
+        revealItems.forEach((item) => item.classList.add("fx-reveal"));
+
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("fx-in");
+            revealObserver.unobserve(entry.target);
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+
+        requestAnimationFrame(() => revealItems.forEach((item) => revealObserver.observe(item)));
+      }
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const snakeButton = document.getElementById("snakeGame");
+      const snakeCanvas = document.getElementById("snakeCanvas");
+      const snakeStatus = document.getElementById("snakeStatus");
+      if (!snakeButton || !snakeCanvas || !snakeStatus) return;
+
+      const ctx = snakeCanvas.getContext("2d");
+      const cells = 12;
+      const cell = snakeCanvas.width / cells;
+      let snake = [];
+      let food = { x: 8, y: 4 };
+      let direction = { x: 1, y: 0 };
+      let nextDirection = { x: 1, y: 0 };
+      let score = 0;
+      let timer = 0;
+      let running = false;
+
+      function drawGrid() {
+        ctx.fillStyle = "#000401";
+        ctx.fillRect(0, 0, 120, 120);
+        ctx.strokeStyle = "rgba(57,255,106,0.055)";
+        ctx.lineWidth = 1;
+        for (let i = cell; i < 120; i += cell) {
+          ctx.beginPath();
+          ctx.moveTo(i, 0);
+          ctx.lineTo(i, 120);
+          ctx.moveTo(0, i);
+          ctx.lineTo(120, i);
+          ctx.stroke();
+        }
+      }
+
+      function drawSnake() {
+        drawGrid();
+        ctx.shadowColor = "#39ff6a";
+        ctx.shadowBlur = 7;
+        ctx.fillStyle = "#baffc9";
+        ctx.fillRect(food.x * cell + 3, food.y * cell + 3, cell - 6, cell - 6);
+
+        snake.forEach((part, index) => {
+          ctx.fillStyle = index === 0 ? "#c9ffd5" : `rgba(57,255,106,${Math.max(0.38, 0.92 - index * 0.055)})`;
+          ctx.fillRect(part.x * cell + 1, part.y * cell + 1, cell - 2, cell - 2);
+        });
+        ctx.shadowBlur = 0;
+      }
+
+      function overlay(label) {
+        ctx.fillStyle = "rgba(0,4,1,0.72)";
+        ctx.fillRect(13, 49, 94, 22);
+        ctx.strokeStyle = "rgba(57,255,106,0.34)";
+        ctx.strokeRect(13.5, 49.5, 93, 21);
+        ctx.fillStyle = "#9affb2";
+        ctx.font = "8px monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, 60, 60);
+      }
+
+      function placeFood() {
+        let candidate;
+        do {
+          candidate = {
+            x: Math.floor(Math.random() * cells),
+            y: Math.floor(Math.random() * cells)
+          };
+        } while (snake.some((part) => part.x === candidate.x && part.y === candidate.y));
+        food = candidate;
+      }
+
+      function endSnake() {
+        running = false;
+        window.clearInterval(timer);
+        snakeButton.classList.remove("is-live");
+        snakeStatus.textContent = `DEAD/${score}`;
+        drawSnake();
+        overlay("GAME OVER · CLICK");
+      }
+
+      function stepSnake() {
+        direction = nextDirection;
+        const head = {
+          x: snake[0].x + direction.x,
+          y: snake[0].y + direction.y
+        };
+
+        const hitWall = head.x < 0 || head.y < 0 || head.x >= cells || head.y >= cells;
+        const hitSelf = snake.some((part) => part.x === head.x && part.y === head.y);
+        if (hitWall || hitSelf) {
+          endSnake();
+          return;
+        }
+
+        snake.unshift(head);
+        if (head.x === food.x && head.y === food.y) {
+          score += 1;
+          snakeStatus.textContent = `S:${score}`;
+          placeFood();
+        } else {
+          snake.pop();
+        }
+        drawSnake();
+      }
+
+      function startSnake(initialDirection = { x: 1, y: 0 }) {
+        if (running) return;
+        window.clearInterval(timer);
+        const head = { x: 5, y: 6 };
+        snake = [
+          head,
+          { x: head.x - initialDirection.x, y: head.y - initialDirection.y },
+          { x: head.x - initialDirection.x * 2, y: head.y - initialDirection.y * 2 }
+        ];
+        direction = initialDirection;
+        nextDirection = initialDirection;
+        score = 0;
+        running = true;
+        placeFood();
+        snakeStatus.textContent = "S:0";
+        snakeButton.classList.add("is-live");
+        drawSnake();
+        timer = window.setInterval(stepSnake, 118);
+      }
+
+      const directions = {
+        ArrowUp: { x: 0, y: -1 }, w: { x: 0, y: -1 }, W: { x: 0, y: -1 },
+        ArrowDown: { x: 0, y: 1 }, s: { x: 0, y: 1 }, S: { x: 0, y: 1 },
+        ArrowLeft: { x: -1, y: 0 }, a: { x: -1, y: 0 }, A: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 }, d: { x: 1, y: 0 }, D: { x: 1, y: 0 }
+      };
+
+      function requestSnakeDirection(requested) {
+        if (!running) {
+          startSnake(requested);
+          return;
+        }
+        if (requested.x === -direction.x && requested.y === -direction.y) return;
+        nextDirection = requested;
+      }
+
+      snakeButton.addEventListener("click", () => startSnake());
+      snakeButton.addEventListener("keydown", (event) => {
+        const requested = directions[event.key];
+        if (!requested) return;
+        event.preventDefault();
+        requestSnakeDirection(requested);
+      });
+
+      const mouseDirections = {
+        up: directions.ArrowUp,
+        down: directions.ArrowDown,
+        left: directions.ArrowLeft,
+        right: directions.ArrowRight
+      };
+
+      document.querySelectorAll("[data-snake-dir]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const requested = mouseDirections[button.dataset.snakeDir];
+          if (requested) requestSnakeDirection(requested);
+        });
+      });
+
+      drawGrid();
+      overlay("CLICK TO PLAY");
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const gameButton = document.getElementById("breakoutGame");
+      const canvas = document.getElementById("breakoutCanvas");
+      const status = document.getElementById("breakoutStatus");
+      const leftButton = document.getElementById("breakoutLeft");
+      const rightButton = document.getElementById("breakoutRight");
+      if (!gameButton || !canvas || !status || !leftButton || !rightButton) return;
+
+      const ctx = canvas.getContext("2d");
+      const paddle = { x: 44, y: 108, w: 32, h: 4 };
+      const ball = { x: 60, y: 91, r: 2.6, vx: 1.25, vy: -1.48 };
+      let bricks = [];
+      let leftHeld = false;
+      let rightHeld = false;
+      let running = false;
+      let score = 0;
+      let frame = 0;
+      let lastFrame = 0;
+
+      function makeBricks() {
+        bricks = [];
+        for (let row = 0; row < 3; row += 1) {
+          for (let col = 0; col < 4; col += 1) {
+            bricks.push({ x: 7 + col * 27, y: 11 + row * 10, w: 22, h: 6, alive: true });
+          }
+        }
+      }
+
+      function drawGrid() {
+        ctx.fillStyle = "#000401";
+        ctx.fillRect(0, 0, 120, 120);
+        ctx.strokeStyle = "rgba(57,255,106,0.045)";
+        for (let y = 10; y < 120; y += 10) {
+          ctx.beginPath();
+          ctx.moveTo(0, y + 0.5);
+          ctx.lineTo(120, y + 0.5);
+          ctx.stroke();
+        }
+      }
+
+      function drawGame() {
+        drawGrid();
+        ctx.shadowColor = "#39ff6a";
+        ctx.shadowBlur = 6;
+        bricks.forEach((brick, index) => {
+          if (!brick.alive) return;
+          ctx.fillStyle = index < 4 ? "#9affb2" : "#39ff6a";
+          ctx.fillRect(brick.x, brick.y, brick.w, brick.h);
+        });
+        ctx.fillStyle = "#baffc9";
+        ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      function overlay(label) {
+        ctx.fillStyle = "rgba(0,4,1,0.74)";
+        ctx.fillRect(13, 49, 94, 22);
+        ctx.strokeStyle = "rgba(57,255,106,0.34)";
+        ctx.strokeRect(13.5, 49.5, 93, 21);
+        ctx.fillStyle = "#9affb2";
+        ctx.font = "8px monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, 60, 60);
+      }
+
+      function finish(label) {
+        running = false;
+        cancelAnimationFrame(frame);
+        gameButton.classList.remove("is-live");
+        status.textContent = label === "SYSTEM CLEAR" ? `WIN/${score}` : `MISS/${score}`;
+        drawGame();
+        overlay(`${label} · CLICK`);
+      }
+
+      function resetGame() {
+        paddle.x = 44;
+        ball.x = 60;
+        ball.y = 91;
+        ball.vx = Math.random() > 0.5 ? 1.25 : -1.25;
+        ball.vy = -1.48;
+        score = 0;
+        makeBricks();
+      }
+
+      function update(timeScale) {
+        if (leftHeld) paddle.x -= 2.3 * timeScale;
+        if (rightHeld) paddle.x += 2.3 * timeScale;
+        paddle.x = Math.max(2, Math.min(118 - paddle.w, paddle.x));
+
+        ball.x += ball.vx * timeScale;
+        ball.y += ball.vy * timeScale;
+
+        if (ball.x - ball.r <= 1 && ball.vx < 0) ball.vx *= -1;
+        if (ball.x + ball.r >= 119 && ball.vx > 0) ball.vx *= -1;
+        if (ball.y - ball.r <= 1 && ball.vy < 0) ball.vy *= -1;
+
+        if (
+          ball.vy > 0 &&
+          ball.y + ball.r >= paddle.y &&
+          ball.y - ball.r <= paddle.y + paddle.h &&
+          ball.x >= paddle.x &&
+          ball.x <= paddle.x + paddle.w
+        ) {
+          ball.y = paddle.y - ball.r;
+          ball.vy = -Math.abs(ball.vy) - 0.015;
+          const offset = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+          ball.vx += offset * 0.28;
+          ball.vx = Math.max(-2.2, Math.min(2.2, ball.vx));
+        }
+
+        for (const brick of bricks) {
+          if (!brick.alive) continue;
+          if (
+            ball.x + ball.r >= brick.x &&
+            ball.x - ball.r <= brick.x + brick.w &&
+            ball.y + ball.r >= brick.y &&
+            ball.y - ball.r <= brick.y + brick.h
+          ) {
+            brick.alive = false;
+            ball.vy *= -1;
+            score += 1;
+            status.textContent = `S:${score}`;
+            break;
+          }
+        }
+
+        if (bricks.every((brick) => !brick.alive)) {
+          finish("SYSTEM CLEAR");
+          return;
+        }
+
+        if (ball.y - ball.r > 120) finish("SIGNAL LOST");
+      }
+
+      function tick(now) {
+        if (!running) return;
+        const timeScale = lastFrame ? Math.min(1.8, (now - lastFrame) / 16.667) : 1;
+        lastFrame = now;
+        update(timeScale);
+        if (!running) return;
+        drawGame();
+        frame = requestAnimationFrame(tick);
+      }
+
+      function startGame() {
+        if (running) return;
+        resetGame();
+        running = true;
+        lastFrame = 0;
+        status.textContent = "S:0";
+        gameButton.classList.add("is-live");
+        drawGame();
+        frame = requestAnimationFrame(tick);
+      }
+
+      function directionKey(key) {
+        return key === "ArrowLeft" || key === "ArrowRight" || key === "a" || key === "A" || key === "d" || key === "D";
+      }
+
+      gameButton.addEventListener("click", startGame);
+      gameButton.addEventListener("pointermove", (event) => {
+        if (!running) return;
+        const rect = canvas.getBoundingClientRect();
+        const normalizedX = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+        paddle.x = Math.max(2, Math.min(118 - paddle.w, normalizedX * 120 - paddle.w / 2));
+      });
+      gameButton.addEventListener("keydown", (event) => {
+        if (!directionKey(event.key)) return;
+        event.preventDefault();
+        if (!running) startGame();
+        if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") leftHeld = true;
+        if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") rightHeld = true;
+      });
+      gameButton.addEventListener("keyup", (event) => {
+        if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") leftHeld = false;
+        if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") rightHeld = false;
+      });
+      gameButton.addEventListener("blur", () => {
+        leftHeld = false;
+        rightHeld = false;
+      });
+
+      function bindMouseHold(button, side) {
+        button.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          if (!running) startGame();
+          button.classList.add("is-held");
+          if (side === "left") leftHeld = true;
+          if (side === "right") rightHeld = true;
+          if (typeof button.setPointerCapture === "function") button.setPointerCapture(event.pointerId);
+        });
+
+        const release = () => {
+          button.classList.remove("is-held");
+          if (side === "left") leftHeld = false;
+          if (side === "right") rightHeld = false;
+        };
+
+        button.addEventListener("pointerup", release);
+        button.addEventListener("pointercancel", release);
+        button.addEventListener("lostpointercapture", release);
+      }
+
+      bindMouseHold(leftButton, "left");
+      bindMouseHold(rightButton, "right");
+
+      resetGame();
+      drawGame();
+      overlay("CLICK TO PLAY");
+    })();
+  </script>
 </body>
 </html>
-
-
-
